@@ -8,7 +8,7 @@
                         ? asset('photos/'.$setting->logo)
                         : \Illuminate\Support\Facades\Storage::disk('public')->url($setting->logo);
                 @endphp
-                <x-custom-logo src="{{ $logoUrl }}" class="app-brand-logo sm:h-7" />
+                <x-custom-logo src="{{ $logoUrl }}" class="app-brand-logo" />
             @else
                 merci<span>buddy</span>
             @endif

@@ -40,9 +40,7 @@ a {
   }
 
   .landing-background {
-    background:
-      radial-gradient(820px 420px at 50% -120px, rgba(8, 115, 187, .16), transparent 62%),
-      linear-gradient(180deg, #d7ecfa 0%, #bcdff5 48%, #a5d3f0 100%);
+    background: #bdf3fb;
     color: #0c4a6e;
     font-family: 'Figtree', 'Inter', ui-sans-serif, system-ui, sans-serif;
   }
@@ -101,7 +99,7 @@ a {
   .app-content { flex: 1 1 auto; min-height: 0; padding: 20px 16px 12px; overflow: hidden; display: flex; }
   .app-content-inner { width: min(100%, 760px); margin: 0 auto; display: flex; flex-direction: column; align-items: stretch; min-height: 0; height: 100%; }
   .app-hero { text-align: center; flex: 0 0 auto; }
-  .app-eyebrow { margin: 0 0 8px; color: #0873bb; font-size: 11px; font-weight: 800; letter-spacing: 2.2px; text-transform: uppercase; }
+  .app-eyebrow { margin: 0 0 8px; color: #b45309; font-size: 11px; font-weight: 800; letter-spacing: 2.2px; text-transform: uppercase; }
   .app-heading { margin: 0; color: #0a5c96; font-size: clamp(26px, 4.6vw, 42px); font-weight: 800; line-height: 1.12; letter-spacing: -0.8px; }
   .app-heading span { color: inherit; }
   .app-subheading { margin: 8px auto 0; max-width: 520px; color: #4f6f80; font-size: 13.5px; line-height: 1.55; }
@@ -343,8 +341,8 @@ a {
 
   @media (min-width: 640px) {
     .app-topbar { height: 64px; padding: 0 28px; }
-    .app-brand { font-size: 22px; }
-    .app-brand-logo { height: 28px; }
+    .app-brand { font-size: 19px; }
+    .app-brand-logo { height: 22px; }
     .app-content { padding: 28px 24px 14px; }
     .app-content-inner { width: min(100%, 720px); }
     .app-heading { font-size: clamp(32px, 4vw, 46px); }
@@ -365,6 +363,7 @@ a {
 
   @media (max-width: 639px) {
     .app-ai-trigger-label { display: none; }
+    .app-heading { font-size: clamp(30px, 7.5vw, 36px); }
     .app-subheading { font-size: 12.5px; }
   }
 

@@ -358,12 +358,16 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        collect(['About Us', 'Privacy Policy', 'Terms & Conditions'])->each(function ($title) {
+        collect([
+            ['About Us', 'about'],
+            ['Privacy Policy', 'privacy-policy'],
+            ['Terms of Use', 'terms-of-use'],
+        ])->each(function ($page) {
             Page::firstOrCreate(
-                ['slug' => Str::slug($title)],
+                ['slug' => $page[1]],
                 [
-                    'title' => $title,
-                    'content' => '<p>This is the '.$title.' page content. Edit this from the admin panel.</p>',
+                    'title' => $page[0],
+                    'content' => '<p>This is the '.$page[0].' page content. Edit this from the admin panel.</p>',
                 ],
             );
         });

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,39 +12,30 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        @livewireStyles
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        <script>
-            // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark')
-            }
-        </script>
-
-        <script>
-            // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark')
-            }
-        </script>
+        @livewireStyles
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-            <div>
-                <a href="/" wire:navigate.hover>
-                    <livewire:guest-page-logo />
-                </a>
-            </div>
+    <body class="font-sans antialiased">
+        <div class="landing-background landing-locked">
+            <!-- Page Content -->
+            <main class="landing-main">
+                <div class="app-shell">
+                    <livewire:navigation />
 
-            <div class="max-w-sm mx-4 rounded-md sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
+                    <div class="app-page">
+                        <div class="w-full max-w-md mx-auto">
+                            <div class="app-page-card">
+                                {{ $slot }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <livewire:footer-section />
+                </div>
+            </main>
         </div>
+
+        @include('components.assistant-chat')
 
         @livewireScripts
     </body>

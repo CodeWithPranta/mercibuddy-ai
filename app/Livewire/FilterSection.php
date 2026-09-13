@@ -26,9 +26,10 @@ class FilterSection extends Component
 
     public function mount()
     {
-        // Remember the country (useful when coming back), but always start
-        // with no category highlighted so a previous choice never looks
-        // pre-selected when the visitor returns to this page.
+        // Remember the country and category (useful when coming back
+        // from the listing page): the previous category stays
+        // highlighted until the visitor picks a new one, which replaces
+        // it, or picks another country, which clears it.
         $this->selectedCategory = null;
 
         if (auth()->check()) {
@@ -38,11 +39,13 @@ class FilterSection extends Component
 
             if ($filterValues) {
                 $this->selectedCountry = $filterValues->country_id;
+                $this->selectedCategory = $filterValues->category_id;
             }
         } elseif (session()->has('filter_values')) {
             // User is not authenticated, check for session filter values
             $sessionValues = session('filter_values');
             $this->selectedCountry = $sessionValues['country_id'];
+            $this->selectedCategory = $sessionValues['category_id'] ?? null;
         }
 
         $this->countries = Country::all();

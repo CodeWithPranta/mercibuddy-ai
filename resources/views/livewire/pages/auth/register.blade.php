@@ -45,20 +45,20 @@ new #[Layout('layouts.guest')] class extends Component
     <form wire:submit="register">
         <!-- Name -->
         <div>
-            <fieldset class="border p-2 rounded-md border-gray-300 dark:border-gray-700">
-                <legend class="text-gray-700 text-sm dark:text-gray-300">Account Type</legend>
+            <fieldset class="border p-2 rounded-md border-gray-300">
+                <legend class="text-gray-700 text-sm">Account Type</legend>
                 <div class="flex flex-wrap justify-between">
                 <div>
-                    <input wire:model="user_type" value="0" type="radio" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="user_type">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{__('General User')}}</span>
+                    <input wire:model="user_type" value="0" type="radio" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="user_type">
+                    <span class="text-sm text-gray-600">{{__('General User')}}</span>
                 </div>
                 <div>
-                    <input wire:model="user_type" value="2" type="radio" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="user_type">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{__('Skilled Artisan')}}</span>
+                    <input wire:model="user_type" value="2" type="radio" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="user_type">
+                    <span class="text-sm text-gray-600">{{__('Skilled Artisan')}}</span>
                 </div>
                 <div>
-                    <input wire:model="user_type" value="3" type="radio" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="user_type">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{__('Both')}}</span>
+                    <input wire:model="user_type" value="3" type="radio" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="user_type">
+                    <span class="text-sm text-gray-600">{{__('Both')}}</span>
                     <x-input-error :messages="$errors->get('user_type')" class="mt-2" />
                 </div>
                 </div>
@@ -102,15 +102,14 @@ new #[Layout('layouts.guest')] class extends Component
 
         <div class="block mt-4">
             <label for="agree" class="inline-flex items-center">
-                <input wire:model="agree" id="agree" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="agree">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('I have read and agree to the') }} <a href="{{url('page/terms-of-use')}}" class="text-red-500 dark:text-red-400">{{__('Terms of Use')}}</a> and <a href="{{url('page/privacy-policy')}}" class="text-red-500 dark:text-red-400">{{__('Privacy Policy')}}</a></span>
+                <input wire:model="agree" id="agree" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="agree">
+                <span class="ms-2 text-sm text-gray-600">{{ __('I have read and agree to the') }} <a href="{{url('page/terms-of-use')}}" class="text-red-500">{{__('Terms of Use')}}</a> and <a href="{{url('page/privacy-policy')}}" class="text-red-500">{{__('Privacy Policy')}}</a></span>
                 <x-input-error :messages="$errors->get('agree')" class="mt-2" />
             </label>
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <x-light-dark-switch />
-            <a class="underline text-sm pl-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}" wire:navigate>
+            <a class="underline text-sm pl-2 text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}" wire:navigate>
                 {{ __('Already registered?') }}
             </a>
 

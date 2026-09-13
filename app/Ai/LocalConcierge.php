@@ -189,7 +189,7 @@ class LocalConcierge
     private function matchedService(string $question): ?string
     {
         $text = mb_strtolower($question);
-        $categories = Category::orderByRaw('CHAR_LENGTH(name) DESC')->pluck('name');
+        $categories = Category::orderByRaw('LENGTH(name) DESC')->pluck('name');
 
         foreach ($categories as $name) {
             if (str_contains($text, mb_strtolower($name))) {
