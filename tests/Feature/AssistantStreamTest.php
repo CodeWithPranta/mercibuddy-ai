@@ -32,6 +32,27 @@ test('chat streams live tokens and finishes with artisan cards', function () {
         ->and($messages[array_key_last($messages)]['text'])->toContain('Basel');
 });
 
+test('suggested artisan cards always carry a working profile link', function () {
+    disableChatAi();
+    seedConciergeDirectory();
+
+    $stream = $this->withoutMiddleware(VerifyCsrfToken::class)
+        ->postJson('/assistant/stream', ['question' => 'Basel'])
+        ->streamedContent();
+
+    preg_match('/event: done\ndata: (.*)\n/', $stream, $matches);
+
+    expect($matches)->not->toBeEmpty();
+
+    $artisans = json_decode($matches[1], true)['artisans'] ?? [];
+
+    expect($artisans)->not->toBeEmpty();
+
+    foreach ($artisans as $artisan) {
+        expect($artisan['profile_url'] ?? '')->toContain('/artisan/');
+    }
+});
+
 test('chat stream validates the question', function () {
     $response = $this->withoutMiddleware(VerifyCsrfToken::class)
         ->postJson('/assistant/stream', ['question' => 'x']);

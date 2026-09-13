@@ -211,6 +211,19 @@
 
     window.addEventListener('open-assistant-chat', openChat);
     document.getElementById('yaara-chat-close').addEventListener('click', closeChat);
+
+    // SPA (wire:navigate) navigations don't reload the page, so an open
+    // drawer would survive them and cover the next page on mobile (e.g.
+    // guest tapped a profile link and landed on login underneath the
+    // chat). Close it on every real navigation. The flag guards the
+    // initial page load so a remembered-open chat still restores.
+    var navigationArmed = false;
+    document.addEventListener('livewire:navigated', function () {
+        if (navigationArmed) {
+            closeChat();
+        }
+        navigationArmed = true;
+    });
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
             closeChat();
@@ -301,6 +314,10 @@
             var link = document.createElement('a');
             link.className = 'app-chat-artisan';
             link.setAttribute('href', artisan.profile_url || '#');
+            // Close the drawer the moment a suggested profile is tapped so
+            // it can never hide the page that opens (login on mobile takes
+            // the whole screen otherwise).
+            link.addEventListener('click', closeChat);
 
             var top = document.createElement('span');
             top.className = 'app-chat-artisan-top';
@@ -515,6 +532,12 @@
             hideError();
             scrollDown();
         });
+    });
+
+    // Cards restored from the session are rendered by Blade rather than
+    // built by artisanCards(): bind them directly as well.
+    body.querySelectorAll('a.app-chat-artisan[href]').forEach(function (link) {
+        link.addEventListener('click', closeChat);
     });
 
     scrollDown();
