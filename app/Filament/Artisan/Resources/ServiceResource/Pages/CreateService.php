@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Filament\Artisan\Resources\ServiceResource\Pages;
+
+use App\Filament\Artisan\Resources\ServiceResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateService extends CreateRecord
+{
+    protected static string $resource = ServiceResource::class;
+}
