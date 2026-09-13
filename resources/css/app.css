@@ -363,7 +363,7 @@ a {
 
   @media (max-width: 639px) {
     .app-ai-trigger-label { display: none; }
-    .app-heading { font-size: clamp(30px, 7.5vw, 36px); }
+    .app-heading { font-size: clamp(24px, 6vw, 32px); }
     .app-subheading { font-size: 12.5px; }
   }
 

@@ -483,6 +483,16 @@
         var suggestion = event.target.closest('[data-suggest]');
         if (suggestion) {
             submit(suggestion.getAttribute('data-suggest'));
+            return;
+        }
+
+        // Tapping a link inside the chat (e.g. an AI-suggested artisan
+        // profile) must close the drawer first: the persisted `yaara-open`
+        // flag would otherwise reopen it on top of the next page, which on
+        // mobile covers the whole screen and makes the link look broken.
+        var link = event.target.closest('a[href]');
+        if (link) {
+            closeChat();
         }
     });
 
