@@ -8,7 +8,7 @@
             : null;
     @endphp
     @if ($logoUrl)
-        <x-custom-logo src="{{ $logoUrl }}" class="h-12 sm:h-16 w-auto" />
+        <x-custom-logo src="{{ $logoUrl }}" class="h-7 sm:h-8 w-auto" />
     @else
         <p class="app-brand">merci<span>buddy</span></p>
     @endif

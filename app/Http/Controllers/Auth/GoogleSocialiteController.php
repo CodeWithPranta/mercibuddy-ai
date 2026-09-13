@@ -35,6 +35,8 @@ class GoogleSocialiteController extends Controller
 
             if ($finduser) {
 
+                $this->ensureBothTypeAccess($finduser);
+
                 FacadesAuth::login($finduser);
 
                 return redirect()->intended('/');
@@ -45,6 +47,8 @@ class GoogleSocialiteController extends Controller
                     'email' => $user->email,
                     'social_id' => $user->id,
                     'social_type' => 'google',
+                    'user_type' => 3,
+                    'email_verified_at' => now(),
                     'password' => encrypt('my-google'),
                 ]);
 
@@ -55,6 +59,29 @@ class GoogleSocialiteController extends Controller
 
         } catch (Exception $e) {
             dd($e->getMessage());
+        }
+    }
+
+    /**
+     * Everyone who signs in with Gmail counts as a "Both" user: existing
+     * Google accounts stuck on General (0) are upgraded, and Google
+     * emails are trusted as verified so the profile pages open directly.
+     * Deliberate Admin (1) or Artisan-only (2) assignments are untouched.
+     */
+    private function ensureBothTypeAccess(User $user): void
+    {
+        $updates = [];
+
+        if ($user->social_type === 'google' && (int) $user->user_type === 0) {
+            $updates['user_type'] = 3;
+        }
+
+        if ($user->email_verified_at === null) {
+            $updates['email_verified_at'] = now();
+        }
+
+        if ($updates !== []) {
+            $user->update($updates);
         }
     }
 }

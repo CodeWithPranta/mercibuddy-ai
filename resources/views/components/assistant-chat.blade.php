@@ -177,7 +177,9 @@
 
     // Tapping a footer link navigates away: close the drawer first so it
     // never covers the next page and navigation always feels instant.
-    document.querySelectorAll('.app-bottom-nav a').forEach(function (link) {
+    // The More toggle is included so its menu never opens underneath
+    // the open chat.
+    document.querySelectorAll('.app-bottom-nav a, .app-bottom-nav button').forEach(function (link) {
         link.addEventListener('click', closeChat);
     });
 
