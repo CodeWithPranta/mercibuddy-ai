@@ -23,7 +23,7 @@ function seedRouteDirectory(): array
     $brittany = State::create(['name' => 'Brittany', 'country_id' => $france->id]);
     $rennes = City::create(['name' => 'Rennes', 'state_id' => $brittany->id]);
 
-    $makeArtisan = function (string $name, string $email, Category $category, Country $country, State $state, City $city, string $experience, string $createdAt): Artisan {
+    $makeArtisan = function (string $name, string $email, Category $category, Country $country, State $state, City $city, string $experience, string $createdAt, ?float $hourlyRate = null): Artisan {
         $user = User::create(['name' => $name, 'email' => $email, 'password' => 'password', 'user_type' => 2]);
 
         $artisan = Artisan::create([
@@ -36,6 +36,8 @@ function seedRouteDirectory(): array
             'last_education' => 'Diploma',
             'date_of_birth' => '1990-01-01',
             'profession' => 'Cleaner',
+            'hourly_rate' => $hourlyRate,
+            'currency' => 'EUR',
             'country_id' => $country->id,
             'state_id' => $state->id,
             'city_id' => $city->id,
@@ -49,9 +51,9 @@ function seedRouteDirectory(): array
     };
 
     // Same country + category, different likes/experience/age.
-    $liked = $makeArtisan('Liked Artisan', 'liked@test.com', $cleaning, $bangladesh, $dhakaState, $dhaka, '3', '2024-06-01 10:00:00');
-    $veteran = $makeArtisan('Veteran Artisan', 'veteran@test.com', $cleaning, $bangladesh, $dhakaState, $dhaka, '10', '2023-01-01 10:00:00');
-    $rookie = $makeArtisan('Rookie Artisan', 'rookie@test.com', $cleaning, $bangladesh, $dhakaState, $dhaka, '1', '2025-01-01 10:00:00');
+    $liked = $makeArtisan('Liked Artisan', 'liked@test.com', $cleaning, $bangladesh, $dhakaState, $dhaka, '3', '2024-06-01 10:00:00', 25);
+    $veteran = $makeArtisan('Veteran Artisan', 'veteran@test.com', $cleaning, $bangladesh, $dhakaState, $dhaka, '10', '2023-01-01 10:00:00', 40);
+    $rookie = $makeArtisan('Rookie Artisan', 'rookie@test.com', $cleaning, $bangladesh, $dhakaState, $dhaka, '1', '2025-01-01 10:00:00', 15);
     $french = $makeArtisan('French Artisan', 'french@test.com', $cleaning, $france, $brittany, $rennes, '8', '2023-06-01 10:00:00');
     $tutor = $makeArtisan('Dhaka Tutor', 'tutor@test.com', $tutoring, $bangladesh, $dhakaState, $dhaka, '6', '2024-01-01 10:00:00');
 
@@ -102,16 +104,20 @@ test('listing shows matching artisans ranked by likes, experience, then seniorit
         ->assertDontSee('Dhaka Tutor');
 });
 
-test('listing can be sorted by experience or newest', function () {
+test('listing can be sorted by price and satisfaction', function () {
     seedRouteDirectory();
 
-    $this->get('/artisans/bangladesh/cleaning?sort=experienced')
+    $this->get('/artisans/bangladesh/cleaning?sort=price_desc')
         ->assertOk()
         ->assertSeeInOrder(['Veteran Artisan', 'Liked Artisan', 'Rookie Artisan']);
 
-    $this->get('/artisans/bangladesh/cleaning?sort=newest')
+    $this->get('/artisans/bangladesh/cleaning?sort=price_asc')
         ->assertOk()
         ->assertSeeInOrder(['Rookie Artisan', 'Liked Artisan', 'Veteran Artisan']);
+
+    $this->get('/artisans/bangladesh/cleaning?sort=satisfaction_desc')
+        ->assertOk()
+        ->assertSeeInOrder(['Liked Artisan', 'Veteran Artisan', 'Rookie Artisan']);
 });
 
 test('clicking a category after selecting a country opens the listing', function () {

@@ -45,6 +45,9 @@ a {
     font-family: 'Figtree', 'Inter', ui-sans-serif, system-ui, sans-serif;
   }
 
+  /* Light grey surface used by the artisan listing + profile pages. */
+  .surface-grey { background: #eef2f3; }
+
   .landing-locked {
     height: 100dvh;
     overflow: hidden;
@@ -175,12 +178,6 @@ a {
   .app-assistant-error { margin: 0; color: #8b2c1a; font-size: 12px; }
   .app-assistant-results { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(8, 115, 187, .25); }
   .app-assistant-answer { margin: 0 0 14px; color: #245f7b; font-size: 15px; line-height: 1.5; }
-  .app-artisan-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px; }
-  .app-artisan-card { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; padding: 14px; background: #fff; border: 1px solid #b5dce8; border-radius: 8px; }
-  .app-artisan-card h3 { margin: 0; color: #813604; font-size: 17px; font-weight: 800; }
-  .app-artisan-card p { margin: 3px 0; color: #0870b6; font-size: 13px; font-weight: 700; }
-  .app-artisan-card small { color: #637d88; font-size: 11px; }
-  .app-artisan-link { align-self: flex-start; color: #0870b6; font-size: 12px; font-weight: 800; text-decoration: underline; }
 
   /* Header AI trigger */
   .app-ai-trigger { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 8px 0 10px; background: #0a5c96; border: 1px solid #0a5c96; border-radius: 999px; color: #fff; box-shadow: 0 4px 12px rgba(10, 92, 150, .28); transition: transform .18s, box-shadow .18s, background .18s; }
@@ -256,71 +253,24 @@ a {
   .app-crumb a:hover { text-decoration: underline; }
   .app-crumb-current { color: #123f57; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* Listing header + controls */
-  .app-list-head { margin-bottom: 14px; }
-  .app-list-head .app-page-title { margin: 0; }
-  .app-list-head .app-page-lead { margin: 6px 0 0; }
-  .app-list-controls { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
-  .app-list-search { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; background: rgba(255, 255, 255, .92); border: 1px solid #c9e4f0; border-radius: 12px; }
-  .app-list-search:focus-within { border-color: #0873bb; box-shadow: 0 0 0 3px rgba(8, 115, 187, .14); }
-  .app-list-search svg { width: 18px; height: 18px; color: #7b97a6; flex-shrink: 0; }
-  .app-list-search input { width: 100%; border: 0; outline: 0; background: transparent; color: #123f57; font-size: 14px; font-weight: 500; }
-  .app-list-sort select { width: 100%; height: 44px; padding: 0 12px; background: rgba(255, 255, 255, .92); border: 1px solid #c9e4f0; border-radius: 12px; color: #123f57; font-size: 13.5px; font-weight: 700; outline: 0; }
+  /* Listing header + search controls */
+  .app-results-head { margin-bottom: 16px; }
+  .app-results-head .app-page-title { margin: 0; }
+  .app-results-count { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0 0; color: #4f6f80; font-size: 13px; font-weight: 600; line-height: 1.5; }
+  .app-results-count strong { color: #0a5c96; font-size: 15px; font-weight: 800; }
+  .app-searchbar { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 16px; }
+  .app-searchbar-field { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; background: rgba(255, 255, 255, .92); border: 1px solid #c9e4f0; border-radius: 14px; }
+  .app-searchbar-field:focus-within { border-color: #0873bb; box-shadow: 0 0 0 3px rgba(8, 115, 187, .14); }
+  .app-searchbar-field svg { width: 18px; height: 18px; color: #7b97a6; flex-shrink: 0; }
+  .app-searchbar-field input { width: 100%; border: 0; outline: 0; background: transparent; color: #123f57; font-size: 14px; font-weight: 500; }
+  .app-searchbar-sort { display: flex; align-items: center; gap: 8px; color: #4f6f80; font-size: 13px; font-weight: 700; }
+  .app-searchbar-sort select { min-width: 0; flex: 1; height: 48px; padding: 0 12px; background: rgba(255, 255, 255, .92); border: 1px solid #c9e4f0; border-radius: 14px; color: #123f57; font-size: 13.5px; font-weight: 700; outline: 0; }
 
-  /* Artisan result cards */
-  .app-artisan-results { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  .app-artisan-card { display: flex; flex-direction: column; gap: 12px; padding: 16px; background: rgba(255, 255, 255, .94); border: 1px solid #d4e8f1; border-radius: 18px; box-shadow: 0 8px 24px rgba(8, 115, 187, .08); transition: transform .18s, box-shadow .18s, border-color .18s; }
-  .app-artisan-card:hover { transform: translateY(-2px); border-color: #0873bb; box-shadow: 0 14px 32px rgba(8, 115, 187, .14); }
-  .app-artisan-card-head { display: flex; gap: 14px; align-items: center; }
-  .app-artisan-photo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid #0873bb; background: #e7fbff; flex-shrink: 0; }
-  .app-artisan-identity { min-width: 0; }
-  .app-artisan-card h3 { margin: 0; color: #0a5c96; font-size: 16.5px; font-weight: 800; letter-spacing: -.2px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .app-artisan-card h3 a { color: inherit; text-decoration: none; }
-  .app-artisan-card h3 a:hover { text-decoration: underline; }
-  .app-artisan-identity p { margin: 3px 0 1px; color: #b97a0a; font-size: 13px; font-weight: 700; }
-  .app-artisan-identity small { color: #7b97a6; font-size: 12px; font-weight: 500; }
-  .app-top-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: linear-gradient(92deg, #d98e00, #f1a900); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
-  .app-artisan-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .app-chip { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: #eef7fc; border: 1px solid #d4e8f1; color: #0a5c96; font-size: 11.5px; font-weight: 700; }
-  .app-chip-gold { background: #fdf6e3; border-color: #f0d48a; color: #8a5f00; }
-  .app-artisan-card .app-artisan-rating { display: flex; flex-direction: column; gap: 5px; }
-  .app-artisan-rating span { color: #5b7b8c; font-size: 12px; font-weight: 700; }
-  .app-artisan-rating-bar { height: 7px; border-radius: 999px; background: #d9eef5; overflow: hidden; }
-  .app-artisan-rating-bar div { height: 100%; background: linear-gradient(90deg, #d98e00, #f1a900); border-radius: 999px; }
   .app-artisan-link { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 999px; background: #0a5c96; color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; transition: background .18s, transform .18s; }
   .app-artisan-link:hover { background: #084e80; transform: translateY(-1px); }
   .app-empty-state { padding: 48px 20px; background: rgba(255, 255, 255, .9); border: 2px dashed #0873bb; border-radius: 18px; color: #0a5c96; font-size: 15px; font-weight: 700; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .app-empty-state span { display: block; font-size: 30px; }
   .app-empty-state p { margin: 0; }
-  .app-service-image { width: 100%; max-height: 160px; object-fit: cover; border-radius: 12px; }
-  .app-service-content { color: #4f6f80; font-size: 13.5px; line-height: 1.6; }
-
-  /* Artisan detail */
-  .app-detail-card { background: rgba(255, 255, 255, .85); border: 2px solid rgba(8, 115, 187, .4); border-radius: 14px; padding: 0 0 26px; overflow: hidden; box-shadow: 0 4px 18px rgba(8, 115, 187, .1); }
-  .app-detail-cover { height: clamp(140px, 26vw, 280px); background-size: cover; background-position: center; }
-  .app-detail-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; padding: 0 22px; margin-top: -34px; }
-  .app-detail-photo { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 2px 10px rgba(8, 115, 187, .3); background: #e7fbff; }
-  .app-detail-identity h1 { margin: 0; color: #0870b6; font-size: clamp(20px, 3.4vw, 30px); font-weight: 800; }
-  .app-detail-identity h1 span { color: #637d88; font-size: .6em; font-weight: 700; }
-  .app-detail-identity p { margin: 2px 0; color: #813604; font-size: 13px; font-weight: 700; }
-  .app-detail-contact { display: flex; gap: 16px; justify-content: center; padding: 16px 22px 4px; }
-  .app-detail-contact a { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: #fff; border: 1px solid #8ecde1; border-radius: 50%; transition: transform .2s; }
-  .app-detail-contact a:hover { transform: translateY(-2px); }
-  .app-detail-section { padding: 12px 22px 0; }
-  .app-detail-section h2 { margin: 10px 0 8px; color: #0870b6; font-size: 19px; font-weight: 800; }
-  .app-detail-bio { color: #245f7b; font-size: 14px; line-height: 1.6; }
-
-  /* Profile hero */
-  .app-profile-hero { background: rgba(255, 255, 255, .94); border: 1px solid #d4e8f1; border-radius: 22px; overflow: hidden; box-shadow: 0 12px 32px rgba(8, 115, 187, .12); }
-  .app-profile-cover { height: clamp(130px, 24vw, 220px); background-size: cover; background-position: center; }
-  .app-profile-head { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; padding: 0 18px; margin-top: -32px; }
-  .app-profile-photo { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 14px rgba(8, 115, 187, .3); background: #e7fbff; }
-  .app-profile-identity { min-width: 0; padding-bottom: 2px; }
-  .app-profile-identity h1 { margin: 0; color: #0a5c96; font-size: clamp(21px, 3.4vw, 28px); font-weight: 800; letter-spacing: -.4px; }
-  .app-profile-profession { margin: 3px 0 1px; color: #b97a0a; font-size: 13.5px; font-weight: 700; }
-  .app-profile-location { margin: 0 0 8px; color: #7b97a6; font-size: 12.5px; font-weight: 500; }
-  .app-profile-rating { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 16px; }
-  .app-profile-rating .app-artisan-rating { flex: 1 1 180px; }
 
   /* Like / dislike pills */
   .app-react { display: flex; align-items: center; gap: 8px; }
@@ -328,16 +278,6 @@ a {
   .app-react-btn svg { width: 17px; height: 17px; }
   .app-react-btn:hover { transform: translateY(-1px); border-color: #0873bb; color: #0a5c96; }
   .app-react-active { background: #0a5c96; border-color: #0a5c96; color: #fff; }
-
-  /* Stats + cards */
-  .app-profile-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
-  .app-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 6px; background: rgba(255, 255, 255, .94); border: 1px solid #d4e8f1; border-radius: 16px; }
-  .app-stat-value { color: #0a5c96; font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
-  .app-stat-label { color: #7b97a6; font-size: 10.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; text-align: center; }
-  .app-profile-card { margin-top: 12px; padding: 18px; background: rgba(255, 255, 255, .94); border: 1px solid #d4e8f1; border-radius: 18px; box-shadow: 0 8px 24px rgba(8, 115, 187, .08); }
-  .app-profile-card h2 { margin: 0 0 10px; color: #0a5c96; font-size: 17px; font-weight: 800; }
-  .app-profile-card .app-detail-contact { padding: 4px 0 0; justify-content: flex-start; }
-  .app-profile-education { margin: 12px 0 0; color: #4f6f80; font-size: 13px; font-weight: 600; }
 
   @media (min-width: 640px) {
     .app-topbar { height: 64px; padding: 0 28px; }
@@ -351,14 +291,16 @@ a {
     .app-inline-selects { grid-template-columns: 1fr 1fr; }
     .app-category-button { min-height: 56px; font-size: 15px; }
     .app-category-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-content: start; }
-    .app-artisan-results { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-    .app-list-controls { grid-template-columns: 1fr 220px; align-items: center; }
-    .app-profile-stats { gap: 10px; }
+    .app-searchbar { grid-template-columns: 1fr 300px; align-items: center; }
     .app-bottom-nav { height: 68px; border-top-left-radius: 18px; border-top-right-radius: 18px; border-left: 1px solid rgba(8, 115, 187, .12); border-right: 1px solid rgba(8, 115, 187, .12); }
     .app-nav-icon { width: 22px; height: 22px; }
     .app-page { padding-top: 40px; }
     .app-page-card { padding: 34px; }
     .app-chat { bottom: 0; border-radius: 0; }
+  }
+
+  @media (min-width: 1024px) {
+    .app-page-inner { max-width: 920px; margin: 0 auto; }
   }
 
   @media (max-width: 639px) {

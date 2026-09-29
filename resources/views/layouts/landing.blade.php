@@ -19,7 +19,7 @@
         @livewireStyles
     </head>
     <body class="font-sans antialiased">
-        <div class="landing-background landing-locked">
+        <div class="landing-background landing-locked @yield('surface_class')">
             <!-- Page Content -->
             <main class="landing-main">
                 <div class="app-shell">@yield('content')</div>

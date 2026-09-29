@@ -36,17 +36,18 @@ class FilteredArtisan extends Component
     public function sortOptions(): array
     {
         return [
-            'recommended' => 'Recommended',
-            'liked' => 'Most liked',
-            'experienced' => 'Most experienced',
-            'newest' => 'Newest members',
+            'price_desc' => 'Price High to Low',
+            'price_asc' => 'Price Low to High',
+            'satisfaction_desc' => 'Satisfaction Rate High to Low',
+            'satisfaction_asc' => 'Satisfaction Rate Low to High',
+            'recommended' => 'Yaara Recommended',
         ];
     }
 
     public function render()
     {
         $artisans = Artisan::query()
-            ->with(['category', 'country', 'state', 'city'])
+            ->with(['category', 'country', 'state', 'city', 'contactDetail'])
             ->withCount(['likers', 'dislikers'])
             ->where('country_id', $this->countryId)
             ->where('category_id', $this->categoryId)
@@ -70,13 +71,14 @@ class FilteredArtisan extends Component
     private function applySort($query): void
     {
         match ($this->sort) {
-            'liked' => $query
-                ->orderByDesc('likers_count')
-                ->orderByRaw('CAST(experience_in_year AS UNSIGNED) DESC'),
-            'experienced' => $query
-                ->orderByRaw('CAST(experience_in_year AS UNSIGNED) DESC')
+            'price_desc' => $query->orderByDesc('hourly_rate')->orderBy('artisans.created_at'),
+            'price_asc' => $query->orderByRaw('hourly_rate IS NULL')->orderBy('hourly_rate')->orderBy('artisans.created_at'),
+            'satisfaction_desc' => $query
+                ->orderByRaw('CASE WHEN (likers_count + dislikers_count) = 0 THEN 0 ELSE likers_count / (likers_count + dislikers_count) END DESC')
                 ->orderByDesc('likers_count'),
-            'newest' => $query->orderByDesc('artisans.created_at'),
+            'satisfaction_asc' => $query
+                ->orderByRaw('CASE WHEN (likers_count + dislikers_count) = 0 THEN 0 ELSE likers_count / (likers_count + dislikers_count) END ASC')
+                ->orderBy('likers_count'),
             // Recommended: most liked first, then most experienced,
             // then the oldest members of the directory.
             default => $query

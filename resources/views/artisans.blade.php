@@ -1,4 +1,5 @@
 @extends('layouts.landing')
+@section('surface_class', 'surface-grey')
 @section('content')
 
     <livewire:navigation />

@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -88,6 +89,28 @@ class ArtisanProfile extends Page implements HasForms
                                 'Contract' => 'Contract',
                             ])
                             ->required(),
+                        TextInput::make('hourly_rate')
+                            ->label('Hourly price')
+                            ->numeric()
+                            ->minValue(0)
+                            ->prefix(fn (callable $get): string => match ($get('currency')) {
+                                'GBP' => '£',
+                                'USD' => '$',
+                                'CHF' => 'CHF ',
+                                default => '€',
+                            })
+                            ->suffix('/ hour'),
+                        Select::make('currency')
+                            ->label('Currency')
+                            ->options([
+                                'EUR' => 'EUR (€)',
+                                'USD' => 'USD ($)',
+                                'GBP' => 'GBP (£)',
+                                'CHF' => 'CHF',
+                            ])
+                            ->default('EUR')
+                            ->live()
+                            ->required(),
                         TextInput::make('experience_in_year')
                             ->numeric()
                             ->required(),
@@ -132,6 +155,34 @@ class ArtisanProfile extends Page implements HasForms
                         Textarea::make('address')->required(),
                         TextInput::make('website')->placeholder('e.g. https://codewithpranta.com')->url(),
                         TextInput::make('video_cv')->label('Video CV link')->placeholder('e.g. https://youtu.be/dZABLXpN3Lk?si=zDowB-mx72jz3rw0')->url(),
+                        Repeater::make('language_proficiencies')
+                            ->label('Language proficiency')
+                            ->schema([
+                                Select::make('language')
+                                    ->options([
+                                        'English' => 'English',
+                                        'French' => 'French',
+                                        'German' => 'German',
+                                        'Bengali' => 'Bengali',
+                                        'Spanish' => 'Spanish',
+                                        'Arabic' => 'Arabic',
+                                        'Portuguese' => 'Portuguese',
+                                        'Italian' => 'Italian',
+                                    ])
+                                    ->required(),
+                                Select::make('proficiency')
+                                    ->options([
+                                        'Basic' => 'Basic',
+                                        'Conversational' => 'Conversational',
+                                        'Professional' => 'Professional',
+                                        'Fluent' => 'Fluent',
+                                        'Native' => 'Native',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->defaultItems(0)
+                            ->columnSpanFull(),
                         RichEditor::make('biography')
                             ->label('Write about yourself')
                             ->required()

@@ -23,6 +23,9 @@ class Artisan extends Model
         'date_of_birth',
         'profession',
         'profession_type',
+        'hourly_rate',
+        'currency',
+        'language_proficiencies',
         'country_id',
         'state_id',
         'city_id',
@@ -30,6 +33,14 @@ class Artisan extends Model
         'biography',
         'video_cv',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'hourly_rate' => 'decimal:2',
+            'language_proficiencies' => 'array',
+        ];
+    }
 
     public function category(): BelongsTo
     {

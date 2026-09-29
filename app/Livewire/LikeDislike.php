@@ -8,14 +8,10 @@ use Livewire\Component;
 class LikeDislike extends Component
 {
     public $artisan;
-    // public $userLikesArtisan;
-    // public $userDislikesArtisan;
 
-    public function mount($artisan)
+    public function mount($artisan): void
     {
         $this->artisan = $artisan;
-        // $this->userLikesArtisan = auth()->user()->likedArtisans->contains($artisan);
-        // $this->userDislikesArtisan = auth()->user()->dislikedArtisans->contains($artisan);
     }
 
     public function like()
