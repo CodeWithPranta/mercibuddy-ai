@@ -55,7 +55,7 @@
                         $skillLines = array_slice($skillLines, 0, 4);
                     @endphp
                     <article class="relative flex min-h-[190px] flex-col rounded-2xl border border-slate-200 bg-[#bdf3fb] p-3 shadow-sm transition hover:shadow-md sm:p-4">
-                        <div class="grid flex-1 gap-3 pt-2 md:grid-cols-[minmax(8rem,0.8fr)_minmax(0,1.5fr)] md:items-start">
+                        <div class="grid flex-1 grid-cols-[minmax(7rem,0.8fr)_minmax(0,1.5fr)] items-start gap-2 pt-2 sm:gap-3">
                             <div class="flex flex-col items-start">
                                 <span class="mb-2 inline-flex h-4 w-9 items-center rounded-full bg-slate-300" title="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" aria-label="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" role="status">
                                     <span class="h-4 w-4 rounded-full shadow-sm {{ $artisan->is_active ? 'ml-auto bg-emerald-600' : 'bg-slate-500' }}"></span>
