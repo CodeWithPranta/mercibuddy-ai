@@ -24,10 +24,9 @@
                 <input wire:model.live.debounce.300ms="search" id="artisan-search" type="text" placeholder="Search by name, skill or area..." autocomplete="off">
             </form>
             <label class="app-searchbar-sort">
-                <span>Sort by:</span>
-                <select wire:model.live="sort" aria-label="Sort artisans">
+                <select wire:model.live="sort" aria-label="Sort artisans" class="!pl-3">
                     @foreach ($this->sortOptions() as $value => $label)
-                        <option value="{{ $value }}">{{ $label }}</option>
+                        <option value="{{ $value }}">Sort by: {{ $label }}</option>
                     @endforeach
                 </select>
             </label>
@@ -55,50 +54,51 @@
                         }
                         $skillLines = array_slice($skillLines, 0, 4);
                     @endphp
-                    <article class="relative rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4 shadow-sm transition hover:shadow-md">
-                        <div class="mb-3 flex items-center justify-between gap-3">
-                            <span class="inline-flex items-center gap-2 text-[11px] font-bold {{ $artisan->is_active ? 'text-emerald-800' : 'text-slate-600' }}">
-                                <span class="relative inline-flex h-5 w-9 items-center rounded-full {{ $artisan->is_active ? 'bg-emerald-300' : 'bg-slate-300' }}" aria-hidden="true">
-                                    <span class="absolute h-4 w-4 rounded-full shadow-sm {{ $artisan->is_active ? 'right-0.5 bg-emerald-600' : 'left-0.5 bg-slate-500' }}"></span>
+                    <article class="relative flex min-h-[190px] flex-col rounded-2xl border border-slate-200 bg-[#bdf3fb] p-3 shadow-sm transition hover:shadow-md sm:p-4">
+                        <div class="grid flex-1 gap-3 pt-2 md:grid-cols-[minmax(8rem,0.8fr)_minmax(0,1.5fr)] md:items-start">
+                            <div class="flex flex-col items-start">
+                                <span class="mb-2 inline-flex h-4 w-9 items-center rounded-full bg-slate-300" title="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" aria-label="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" role="status">
+                                    <span class="h-4 w-4 rounded-full shadow-sm {{ $artisan->is_active ? 'ml-auto bg-emerald-600' : 'bg-slate-500' }}"></span>
                                 </span>
-                                {{ $artisan->is_active ? 'Active' : 'Out of service' }}
-                            </span>
-                        </div>
-
-                        <div class="grid gap-4 md:grid-cols-[minmax(10rem,0.9fr)_minmax(0,1.5fr)] md:items-start">
-                            <a href="{{ $profileUrl }}" wire:navigate.hover class="flex items-center gap-3 md:flex-col md:items-start">
-                                <div class="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-200 shadow-sm">
-                                    <svg viewBox="0 0 40 40" class="h-full w-full" aria-hidden="true">
-                                        <rect width="40" height="40" fill="#3b4a5a"/>
-                                        <circle cx="20" cy="15" r="8" fill="#d8a884"/>
-                                        <path d="M4 40 C4 26 36 26 36 40 Z" fill="#e2b98f"/>
-                                    </svg>
-                                    <img src="{{ $profilePhoto }}" alt="{{ $artisan->full_name }} photo" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="truncate text-base font-bold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
-                                    <p class="mt-1 flex items-center gap-1 truncate text-xs text-slate-700">
-                                        <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>
-                                        {{ $artisan->city?->name ?? $artisan->locationLabel() }}
-                                    </p>
-                                </div>
-                            </a>
+                                <a href="{{ $profileUrl }}" wire:navigate.hover class="block">
+                                    <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-200 shadow-sm">
+                                        <svg viewBox="0 0 40 40" class="h-full w-full" aria-hidden="true">
+                                            <rect width="40" height="40" fill="#3b4a5a"/>
+                                            <circle cx="20" cy="15" r="8" fill="#d8a884"/>
+                                            <path d="M4 40 C4 26 36 26 36 40 Z" fill="#e2b98f"/>
+                                        </svg>
+                                        <img src="{{ $profilePhoto }}" alt="{{ $artisan->full_name }} photo" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
+                                        <span class="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center gap-0.5 rounded-full border-2 border-white bg-rose-500" aria-hidden="true">
+                                            <span class="h-0.5 w-0.5 rounded-full bg-white"></span>
+                                            <span class="h-0.5 w-0.5 rounded-full bg-white"></span>
+                                            <span class="h-0.5 w-0.5 rounded-full bg-white"></span>
+                                        </span>
+                                    </div>
+                                </a>
+                            </div>
 
                             <a href="{{ $profileUrl }}" wire:navigate.hover class="block">
-                            <div class="rounded-2xl border-2 border-slate-300 bg-slate-200 px-4 py-3">
-                                @foreach ($skillLines as $skill)
-                                    <p class="text-[12px] font-semibold leading-snug text-slate-800">{{ $skill }}</p>
-                                @endforeach
-                            </div>
-                        </a>
+                                <div class="rounded-2xl border-2 border-slate-300 bg-slate-200 px-3 py-2">
+                                    @foreach ($skillLines as $skill)
+                                        <p class="text-[12px] font-medium leading-[1.5] text-slate-700">{{ $skill }}</p>
+                                    @endforeach
+                                </div>
+                            </a>
                         </div>
 
-                        <div class="mt-4 flex items-end justify-between gap-3 border-t border-slate-900/10 pt-3">
+                        <div class="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-2">
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-bold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
+                                <p class="mt-1 flex items-center gap-1 truncate text-xs text-slate-700">
+                                    <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>
+                                    {{ $artisan->city?->name ?? $artisan->locationLabel() }}
+                                </p>
+                            </div>
                             <div class="text-center">
-                                <p class="text-3xl font-bold leading-none text-slate-900">{{ $artisan->satisfactionPercentage() }}%</p>
+                                <p class="text-2xl font-bold leading-none text-slate-900">{{ $artisan->satisfactionPercentage() }}%</p>
                                 <p class="mt-1 whitespace-nowrap text-xs text-slate-700">satisfaction rate</p>
                             </div>
-                            <span class="shrink-0 whitespace-nowrap rounded-full bg-[#87382d] px-3 py-2 text-xs font-bold text-white">
+                            <span class="justify-self-end whitespace-nowrap rounded-full bg-[#87382d] px-3 py-2 text-xs font-bold text-white">
                                 @if ($artisan->hourly_rate !== null)
                                     {{ $artisan->currency }} {{ rtrim(rtrim(number_format((float) $artisan->hourly_rate, 2, '.', ''), '0'), '.') }}/hour
                                 @else
