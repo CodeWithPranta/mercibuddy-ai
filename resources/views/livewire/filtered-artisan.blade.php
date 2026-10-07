@@ -35,16 +35,13 @@
         <div wire:loading class="app-loading">Searching...</div>
 
         @if ($artisans->count() !== 0)
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
                 @foreach ($artisans as $artisan)
                     @php
                         $profilePhoto = str_starts_with((string) $artisan->profile_photo, 'http')
                             ? $artisan->profile_photo
                             : asset('storage/'.$artisan->profile_photo);
                         $profileUrl = route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)]);
-                        $messageUrl = $artisan->contactDetail?->email
-                            ? 'mailto:'.$artisan->contactDetail->email
-                            : ($artisan->contactDetail?->whatsapp ? 'https://wa.me/'.$artisan->contactDetail->whatsapp : $profileUrl.'#connect');
                         $skillLines = array_values(array_filter([
                             $artisan->profession,
                             $artisan->profession_type,
@@ -58,58 +55,56 @@
                         }
                         $skillLines = array_slice($skillLines, 0, 4);
                     @endphp
-                    <article class="relative flex flex-col rounded-2xl border border-slate-200 bg-[#bdf3fb] p-3 shadow-sm transition hover:shadow-md sm:p-4">
-                        <span class="absolute left-3 top-3 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" aria-hidden="true"></span>
+                    <article class="relative rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4 shadow-sm transition hover:shadow-md">
+                        <div class="mb-3 flex items-center justify-between gap-3">
+                            <span class="inline-flex items-center gap-2 text-[11px] font-bold {{ $artisan->is_active ? 'text-emerald-800' : 'text-slate-600' }}">
+                                <span class="relative inline-flex h-5 w-9 items-center rounded-full {{ $artisan->is_active ? 'bg-emerald-300' : 'bg-slate-300' }}" aria-hidden="true">
+                                    <span class="absolute h-4 w-4 rounded-full shadow-sm {{ $artisan->is_active ? 'right-0.5 bg-emerald-600' : 'left-0.5 bg-slate-500' }}"></span>
+                                </span>
+                                {{ $artisan->is_active ? 'Active' : 'Out of service' }}
+                            </span>
+                        </div>
 
-                        <a href="{{ $profileUrl }}" wire:navigate.hover class="block">
-                            <div class="mb-3 ml-8 rounded-xl border border-slate-200 bg-white/80 px-3 py-2">
+                        <div class="grid gap-4 md:grid-cols-[minmax(10rem,0.9fr)_minmax(0,1.5fr)] md:items-start">
+                            <a href="{{ $profileUrl }}" wire:navigate.hover class="flex items-center gap-3 md:flex-col md:items-start">
+                                <div class="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-200 shadow-sm">
+                                    <svg viewBox="0 0 40 40" class="h-full w-full" aria-hidden="true">
+                                        <rect width="40" height="40" fill="#3b4a5a"/>
+                                        <circle cx="20" cy="15" r="8" fill="#d8a884"/>
+                                        <path d="M4 40 C4 26 36 26 36 40 Z" fill="#e2b98f"/>
+                                    </svg>
+                                    <img src="{{ $profilePhoto }}" alt="{{ $artisan->full_name }} photo" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="truncate text-base font-bold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
+                                    <p class="mt-1 flex items-center gap-1 truncate text-xs text-slate-700">
+                                        <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>
+                                        {{ $artisan->city?->name ?? $artisan->locationLabel() }}
+                                    </p>
+                                </div>
+                            </a>
+
+                            <a href="{{ $profileUrl }}" wire:navigate.hover class="block">
+                            <div class="rounded-2xl border-2 border-slate-300 bg-slate-200 px-4 py-3">
                                 @foreach ($skillLines as $skill)
                                     <p class="text-[12px] font-semibold leading-snug text-slate-800">{{ $skill }}</p>
                                 @endforeach
                             </div>
-
-                            <div class="flex items-center gap-2">
-                                <div class="flex min-w-0 flex-1 items-center gap-2">
-                                    <div class="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-slate-200 sm:h-11 sm:w-11">
-                                        <svg viewBox="0 0 40 40" class="h-full w-full" aria-hidden="true">
-                                            <rect width="40" height="40" fill="#3b4a5a"/>
-                                            <circle cx="20" cy="15" r="8" fill="#d8a884"/>
-                                            <path d="M4 40 C4 26 36 26 36 40 Z" fill="#e2b98f"/>
-                                        </svg>
-                                        <img src="{{ $profilePhoto }}" alt="{{ $artisan->full_name }} photo" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="truncate text-sm font-semibold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
-                                        <p class="truncate text-xs text-slate-500">{{ $artisan->locationLabel() }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="shrink-0 px-1 text-center">
-                                    <p class="text-lg font-bold leading-none text-slate-900">{{ $artisan->satisfactionPercentage() }}%</p>
-                                    <p class="whitespace-nowrap text-[10px] text-slate-500">satisfaction rate</p>
-                                </div>
-
-                                <span class="shrink-0 whitespace-nowrap rounded-full bg-orange-400 px-2.5 py-1.5 text-[11px] font-bold text-white sm:px-3 sm:text-xs">
-                                    @if ($artisan->hourly_rate !== null)
-                                        {{ $artisan->currency }} {{ rtrim(rtrim(number_format((float) $artisan->hourly_rate, 2, '.', ''), '0'), '.') }}/hour
-                                    @else
-                                        Contact for rate
-                                    @endif
-                                </span>
-                            </div>
                         </a>
+                        </div>
 
-                        <div class="mt-3 flex items-center justify-between gap-2 border-t border-slate-900/10 pt-3">
-                            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
-                                <svg class="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7 11v9H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h3Zm2.5-.3 1-4.6c.1-.5.5-.9 1-.9.7 0 1.2.6 1 1.3l-.6 2.7H19c.8 0 1.4.8 1.2 1.6l-1.4 5.2c-.2.7-.8 1-1.5 1H9.5v-6.3Z"/></svg>
-                                {{ $artisan->likeCount() }} likes
-                            </span>
-                            <div class="flex items-center gap-2">
-                                <a href="{{ $messageUrl }}" @if (str_starts_with($messageUrl, 'http')) target="_blank" rel="noopener" @endif class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-blue-500 text-white transition hover:bg-blue-600" aria-label="Message {{ $artisan->full_name }}">
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path stroke-linecap="round" d="m3 7 9 6 9-6"/></svg>
-                                </a>
-                                <x-share-menu :url="$profileUrl" :title="$artisan->full_name" class="h-9 w-9" />
+                        <div class="mt-4 flex items-end justify-between gap-3 border-t border-slate-900/10 pt-3">
+                            <div class="text-center">
+                                <p class="text-3xl font-bold leading-none text-slate-900">{{ $artisan->satisfactionPercentage() }}%</p>
+                                <p class="mt-1 whitespace-nowrap text-xs text-slate-700">satisfaction rate</p>
                             </div>
+                            <span class="shrink-0 whitespace-nowrap rounded-full bg-[#87382d] px-3 py-2 text-xs font-bold text-white">
+                                @if ($artisan->hourly_rate !== null)
+                                    {{ $artisan->currency }} {{ rtrim(rtrim(number_format((float) $artisan->hourly_rate, 2, '.', ''), '0'), '.') }}/hour
+                                @else
+                                    Contact for rate
+                                @endif
+                            </span>
                         </div>
                     </article>
                 @endforeach

@@ -25,6 +25,7 @@ class Artisan extends Model
         'profession_type',
         'hourly_rate',
         'currency',
+        'is_active',
         'language_proficiencies',
         'country_id',
         'state_id',
@@ -38,6 +39,7 @@ class Artisan extends Model
     {
         return [
             'hourly_rate' => 'decimal:2',
+            'is_active' => 'boolean',
             'language_proficiencies' => 'array',
         ];
     }

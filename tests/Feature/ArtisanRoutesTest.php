@@ -104,6 +104,16 @@ test('listing shows matching artisans ranked by likes, experience, then seniorit
         ->assertDontSee('Dhaka Tutor');
 });
 
+test('listing displays the artisan account status', function () {
+    $seeded = seedRouteDirectory();
+    $seeded['liked']->update(['is_active' => false]);
+
+    $this->get('/artisans/bangladesh/cleaning')
+        ->assertOk()
+        ->assertSee('Out of service')
+        ->assertSee('Active');
+});
+
 test('listing can be sorted by price and satisfaction', function () {
     seedRouteDirectory();
 

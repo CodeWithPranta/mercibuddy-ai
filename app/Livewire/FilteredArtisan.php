@@ -47,7 +47,7 @@ class FilteredArtisan extends Component
     public function render()
     {
         $artisans = Artisan::query()
-            ->with(['category', 'country', 'state', 'city', 'contactDetail'])
+            ->with(['category', 'country', 'state', 'city'])
             ->withCount(['likers', 'dislikers'])
             ->where('country_id', $this->countryId)
             ->where('category_id', $this->categoryId)

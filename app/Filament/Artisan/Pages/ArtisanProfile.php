@@ -15,6 +15,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -111,6 +112,14 @@ class ArtisanProfile extends Page implements HasForms
                             ->default('EUR')
                             ->live()
                             ->required(),
+                        Toggle::make('is_active')
+                            ->label('Account status')
+                            ->helperText('Active profiles are available for new requests.')
+                            ->default(true)
+                            ->onColor('success')
+                            ->offColor('danger')
+                            ->onIcon('heroicon-s-check')
+                            ->offIcon('heroicon-s-x-mark'),
                         TextInput::make('experience_in_year')
                             ->numeric()
                             ->required(),
