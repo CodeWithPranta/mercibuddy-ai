@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('categories', function (Blueprint $table) {
+            $table->json('professions')->nullable()->after('slug');
+        });
+
+        foreach (config('professions') as $slug => $professions) {
+            DB::table('categories')
+                ->where('slug', $slug)
+                ->whereNull('professions')
+                ->update(['professions' => json_encode(array_values($professions))]);
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('categories', function (Blueprint $table) {
+            $table->dropColumn('professions');
+        });
+    }
+};

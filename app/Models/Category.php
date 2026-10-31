@@ -10,7 +10,14 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'icon'];
+    protected $fillable = ['name', 'slug', 'icon', 'professions'];
+
+    protected function casts(): array
+    {
+        return [
+            'professions' => 'array',
+        ];
+    }
 
     public function artisans(): HasMany
     {
@@ -28,6 +35,8 @@ class Category extends Model
             return [];
         }
 
+        $stored = $category->professions ?? [];
+
         $configured = config('professions.'.$category->slug, []);
 
         $used = $category->artisans()
@@ -37,7 +46,8 @@ class Category extends Model
             ->pluck('profession')
             ->all();
 
-        return collect($configured)
+        return collect($stored)
+            ->merge($configured)
             ->merge($used)
             ->filter()
             ->unique()

@@ -9,6 +9,7 @@ use App\Models\Category;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
@@ -40,6 +41,14 @@ class CategoryResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
+                TagsInput::make('professions')
+                    ->label('Profession options')
+                    ->helperText('These options populate the Profession dropdown for artisans in this category.')
+                    ->required()
+                    ->rules(['array', 'max:50'])
+                    ->nestedRecursiveRules(['string', 'max:100'])
+                    ->reorderable()
+                    ->columnSpanFull(),
                 Textarea::make('icon')
                     ->label('SVG icon code (https://flowbite.com/icons/)')
                     ->required(),
@@ -54,6 +63,10 @@ class CategoryResource extends Resource
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
+                TextColumn::make('professions')
+                    ->label('Profession options')
+                    ->formatStateUsing(fn (?array $state): string => implode(', ', $state ?? []))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
