@@ -16,9 +16,12 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -73,10 +76,24 @@ class ArtisanResource extends Resource
                     ->options(
                         Category::orderBy('name')->pluck('name', 'id')
                     )
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('profession', null))
                     ->required(),
-                TextInput::make('profession')
-                    ->label('Profession (e.g. Web Developer)')
-                    ->minLength(2)->required(),
+                Select::make('profession')
+                    ->label('Profession')
+                    ->options(fn (Get $get): array => Category::professionOptions(
+                        $get('category_id') ? (int) $get('category_id') : null
+                    ))
+                    ->searchable()
+                    ->required(),
+                TagsInput::make('skills')
+                    ->label('Skills')
+                    ->helperText('Add 3 to 5 skills. These are shown on the listing card.')
+                    ->required()
+                    ->rules(['array', 'min:3', 'max:5'])
+                    ->nestedRecursiveRules(['string', 'max:50'])
+                    ->reorderable()
+                    ->columnSpanFull(),
                 Select::make('profession_type')
                     ->options([
                         'Full-time' => 'Full-time',
@@ -97,33 +114,39 @@ class ArtisanResource extends Resource
                     ->required(),
                 Select::make('country_id')
                     ->label('Country')
-                    ->options(Country::pluck('name', 'id')->toArray())
+                    ->options(Country::ordered()->pluck('name', 'id')->toArray())
+                    ->searchable()
                     ->live()
-                    ->reactive()
+                    ->afterStateUpdated(function (Set $set): void {
+                        $set('state_id', null);
+                        $set('city_id', null);
+                    })
                     ->required(),
                 Select::make('state_id')
-                    ->label('Region')
-                    ->options(function (callable $get) {
-                        $country = Country::find($get('country_id'));
-                        if (! $country) {
-                            return [0001 => 'Select a country first'];
-                        }
-
-                        return $country->states->pluck('name', 'id');
-                    })
-                    ->reactive()
+                    ->label('State')
+                    ->key(fn (Get $get): string => 'state-'.($get('country_id') ?? 'none'))
+                    ->dynamicOptions(false)
+                    ->options(fn (Get $get): array => ($country = Country::find($get('country_id')))
+                        ? $country->states()->orderBy('name')->pluck('name', 'id')->all()
+                        : [])
+                    ->placeholder(fn (Get $get): string => $get('country_id')
+                        ? 'Select a state'
+                        : 'Select a country first')
+                    ->searchable()
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('city_id', null))
                     ->required(),
                 Select::make('city_id')
                     ->label('City')
-                    ->options(function (callable $get) {
-                        $state = State::find($get('state_id'));
-                        if (! $state) {
-                            return [0001 => 'Select a region first'];
-                        }
-
-                        return $state->cities->pluck('name', 'id');
-                    })
-                    ->reactive()
+                    ->key(fn (Get $get): string => 'city-'.($get('state_id') ?? 'none'))
+                    ->dynamicOptions(false)
+                    ->options(fn (Get $get): array => ($state = State::find($get('state_id')))
+                        ? $state->cities()->orderBy('name')->pluck('name', 'id')->all()
+                        : [])
+                    ->placeholder(fn (Get $get): string => $get('state_id')
+                        ? 'Select a city'
+                        : 'Select a state first')
+                    ->searchable()
                     ->required(),
                 Textarea::make('address')->required(),
                 TextInput::make('website')->url(),

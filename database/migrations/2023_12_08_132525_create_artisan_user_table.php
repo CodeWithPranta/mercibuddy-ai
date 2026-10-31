@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('artisan_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('artisan_id')->constrained();
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('artisan_id')->constrained('artisans');
             $table->enum('reaction', ['like', 'dislike']);
             $table->timestamps();
         });

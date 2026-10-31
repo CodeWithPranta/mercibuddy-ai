@@ -41,18 +41,7 @@
                             ? $artisan->profile_photo
                             : asset('storage/'.$artisan->profile_photo);
                         $profileUrl = route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)]);
-                        $skillLines = array_values(array_filter([
-                            $artisan->profession,
-                            $artisan->profession_type,
-                            $artisan->category?->name,
-                            $artisan->last_education,
-                        ]));
-                        $fallbackSkills = ['Microsoft Office and WordPress', 'Research and Analytical Skills', 'Critical thinking', 'AI & Adaptability Trends'];
-                        foreach ($fallbackSkills as $skill) {
-                            if (count($skillLines) >= 4) break;
-                            if (! in_array($skill, $skillLines, true)) $skillLines[] = $skill;
-                        }
-                        $skillLines = array_slice($skillLines, 0, 4);
+                        $skills = array_slice(array_values(array_filter((array) $artisan->skills)), 0, 5);
                     @endphp
                     <article class="relative flex min-h-[190px] flex-col rounded-2xl border border-slate-200 bg-[#bdf3fb] p-3 shadow-sm transition hover:shadow-md sm:p-4">
                         <div class="grid flex-1 grid-cols-[minmax(7rem,0.8fr)_minmax(0,1.5fr)] items-start gap-2 pt-2 sm:gap-3">
@@ -68,20 +57,17 @@
                                             <path d="M4 40 C4 26 36 26 36 40 Z" fill="#e2b98f"/>
                                         </svg>
                                         <img src="{{ $profilePhoto }}" alt="{{ $artisan->full_name }} photo" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
-                                        <span class="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center gap-0.5 rounded-full border-2 border-white bg-rose-500" aria-hidden="true">
-                                            <span class="h-0.5 w-0.5 rounded-full bg-white"></span>
-                                            <span class="h-0.5 w-0.5 rounded-full bg-white"></span>
-                                            <span class="h-0.5 w-0.5 rounded-full bg-white"></span>
-                                        </span>
                                     </div>
                                 </a>
                             </div>
 
                             <a href="{{ $profileUrl }}" wire:navigate.hover class="block">
-                                <div class="rounded-2xl border-2 border-slate-300 bg-slate-200 px-3 py-2">
-                                    @foreach ($skillLines as $skill)
-                                        <p class="text-[12px] font-medium leading-[1.5] text-slate-700">{{ $skill }}</p>
-                                    @endforeach
+                                <div class="flex h-[124px] flex-col content-start items-start gap-1 overflow-hidden rounded-2xl border-2 border-slate-300 bg-slate-200 px-3.5 py-2.5">
+                                    @forelse ($skills as $skill)
+                                        <span class="block w-fit max-w-full truncate text-[12px] font-medium leading-[1.35] text-slate-700">{{ $skill }}</span>
+                                    @empty
+                                        <span class="text-[13px] font-medium leading-[1.5] text-slate-500">No skills added yet</span>
+                                    @endforelse
                                 </div>
                             </a>
                         </div>

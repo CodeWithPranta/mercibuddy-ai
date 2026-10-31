@@ -6,6 +6,9 @@
 -- Usage: mysql -u root -p < database/merci_buddy_fixed.sql
 -- Or import it with HeidiSQL / phpMyAdmin (it creates and uses
 -- the `merci_buddy` database, matching the app's .env).
+--
+-- WARNING: this resets the `merci_buddy` database. Back up any
+-- local data you want to keep before importing.
 -- --------------------------------------------------------
 
 
@@ -18,8 +21,13 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE DATABASE IF NOT EXISTS `mercibuddy` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `mercibuddy`;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Drop any previous import so stale tables (e.g. an old `artisans`
+-- table with a mismatched `id` type) cannot break the FK creation.
+DROP DATABASE IF EXISTS `merci_buddy`;
+CREATE DATABASE `merci_buddy` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `merci_buddy`;
 
 -- --------------------------------------------------------
 -- 1. users (parent of artisan_user, comments, filter_values)
@@ -83,20 +91,22 @@ CREATE TABLE IF NOT EXISTS `countries` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `shortname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phonecode` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `countries_name_unique` (`name`)
+  UNIQUE KEY `countries_name_unique` (`name`),
+  UNIQUE KEY `countries_slug_unique` (`slug`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `countries` (`id`, `shortname`, `name`, `phonecode`, `created_at`, `updated_at`) VALUES
-	(1, 'BD', 'Bangladesh', '+880', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
-	(2, 'IN', 'India', '+91', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
-	(3, 'GB', 'United Kingdom', '+44', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
-	(4, 'US', 'United States', '+1', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
-	(5, 'CA', 'Canada', '+1', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
-	(6, 'AU', 'Australia', '+61', '2026-09-11 10:46:22', '2026-09-11 10:46:22');
+INSERT INTO `countries` (`id`, `shortname`, `name`, `slug`, `phonecode`, `created_at`, `updated_at`) VALUES
+	(1, 'BD', 'Bangladesh', 'bangladesh', '+880', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
+	(2, 'IN', 'India', 'india', '+91', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
+	(3, 'GB', 'United Kingdom', 'united-kingdom', '+44', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
+	(4, 'US', 'United States', 'united-states', '+1', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
+	(5, 'CA', 'Canada', 'canada', '+1', '2026-09-11 10:46:22', '2026-09-11 10:46:22'),
+	(6, 'AU', 'Australia', 'australia', '+61', '2026-09-11 10:46:22', '2026-09-11 10:46:22');
 
 -- --------------------------------------------------------
 -- 4. states
@@ -200,21 +210,26 @@ CREATE TABLE IF NOT EXISTS `artisans` (
   `date_of_birth` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `profession` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `profession_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `skills` json DEFAULT NULL,
+  `hourly_rate` decimal(10,2) DEFAULT NULL,
+  `currency` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'EUR',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `country_id` bigint unsigned NOT NULL,
   `state_id` bigint unsigned NOT NULL,
   `city_id` bigint unsigned NOT NULL,
   `address` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `biography` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `language_proficiencies` json DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `video_cv` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `artisans` (`id`, `full_name`, `category_id`, `profile_photo`, `cover_photo`, `user_id`, `experience_in_year`, `website`, `last_education`, `date_of_birth`, `profession`, `profession_type`, `country_id`, `state_id`, `city_id`, `address`, `biography`, `created_at`, `updated_at`, `video_cv`) VALUES
-	(1, 'Rakib Ahmed', 1, 'https://i.pravatar.cc/300?u=23', 'https://picsum.photos/seed/cover23/1280/720', 23, '15', 'https://example.com', 'BSc in Computer Science', '1994-09-11', 'Beauty and Wellness', 'Full-time', 1, 1, 1, '123 Sample Street, Dhaka', '<p>Experienced Beauty and Wellness with a passion for delivering quality work and helping clients achieve their goals.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23', 'https://youtu.be/dQw4w9WgXcQ'),
-	(2, 'Nusrat Jahan', 2, 'https://i.pravatar.cc/300?u=24', 'https://picsum.photos/seed/cover24/1280/720', 24, '8', 'https://example.com', 'BSc in Computer Science', '1986-09-11', 'Childcare', 'Part-time', 1, 2, 2, '123 Sample Street, Kolkata', '<p>Experienced Childcare with a passion for delivering quality work and helping clients achieve their goals.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23', 'https://youtu.be/dQw4w9WgXcQ'),
-	(3, 'Tanvir Both', 3, 'https://i.pravatar.cc/300?u=25', 'https://picsum.photos/seed/cover25/1280/720', 25, '8', 'https://example.com', 'BSc in Computer Science', '1997-09-11', 'Cleaning', 'Contract', 1, 1, 1, '123 Sample Street, Dhaka', '<p>Experienced Cleaning with a passion for delivering quality work and helping clients achieve their goals.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23', 'https://youtu.be/dQw4w9WgXcQ');
+INSERT INTO `artisans` (`id`, `full_name`, `category_id`, `profile_photo`, `cover_photo`, `user_id`, `experience_in_year`, `website`, `last_education`, `date_of_birth`, `profession`, `profession_type`, `skills`, `hourly_rate`, `currency`, `is_active`, `country_id`, `state_id`, `city_id`, `address`, `biography`, `language_proficiencies`, `created_at`, `updated_at`, `video_cv`) VALUES
+	(1, 'Rakib Ahmed', 1, 'https://i.pravatar.cc/300?u=23', 'https://picsum.photos/seed/cover23/1280/720', 23, '15', 'https://example.com', 'BSc in Computer Science', '1994-09-11', 'Beauty and Wellness', 'Full-time', '["Beauty treatments", "Client care", "Appointment scheduling"]', 25.00, 'EUR', 1, 1, 1, 1, '123 Sample Street, Dhaka', '<p>Experienced Beauty and Wellness with a passion for delivering quality work and helping clients achieve their goals.</p>', '[\"English\", \"Bengali\"]', '2026-09-11 10:46:23', '2026-09-11 10:46:23', 'https://youtu.be/dQw4w9WgXcQ'),
+	(2, 'Nusrat Jahan', 2, 'https://i.pravatar.cc/300?u=24', 'https://picsum.photos/seed/cover24/1280/720', 24, '8', 'https://example.com', 'BSc in Computer Science', '1986-09-11', 'Childcare', 'Part-time', '["Child supervision", "Activity planning", "First aid"]', 18.00, 'EUR', 1, 1, 2, 2, '123 Sample Street, Kolkata', '<p>Experienced Childcare with a passion for delivering quality work and helping clients achieve their goals.</p>', '[\"English\", \"Bengali\"]', '2026-09-11 10:46:23', '2026-09-11 10:46:23', 'https://youtu.be/dQw4w9WgXcQ'),
+	(3, 'Tanvir Both', 3, 'https://i.pravatar.cc/300?u=25', 'https://picsum.photos/seed/cover25/1280/720', 25, '8', 'https://example.com', 'BSc in Computer Science', '1997-09-11', 'Cleaning', 'Contract', '["Deep cleaning", "Sanitising", "Laundry"]', 30.00, 'EUR', 1, 1, 1, 1, '123 Sample Street, Dhaka', '<p>Experienced Cleaning with a passion for delivering quality work and helping clients achieve their goals.</p>', '[\"English\", \"Bengali\"]', '2026-09-11 10:46:23', '2026-09-11 10:46:23', 'https://youtu.be/dQw4w9WgXcQ');
 
 -- --------------------------------------------------------
 -- 9. contact_details
@@ -258,7 +273,7 @@ INSERT INTO `services` (`id`, `title`, `user_id`, `slug`, `featured_image`, `con
 	(1, 'Service by Rakib Ahmed', 23, 'service-by-rakib-ahmed', 'https://picsum.photos/seed/svc23/600/400', '<p>This is a sample service offered by Rakib Ahmed. Delivering high-quality results on time.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23'),
 	(2, 'Premium service - Rakib Ahmed', 23, 'premium-service-rakib-ahmed-23', 'https://picsum.photos/seed/prem23/600/400', '<p>Premium offering by Rakib Ahmed. Includes priority support and extended revisions.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23'),
 	(3, 'Service by Nusrat Jahan', 24, 'service-by-nusrat-jahan', 'https://picsum.photos/seed/svc24/600/400', '<p>This is a sample service offered by Nusrat Jahan. Delivering high-quality results on time.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23'),
-	(4, 'Premium service - Nusrat Jahan', 24, 'premium-service-rakib-ahmed-23', 'https://picsum.photos/seed/prem24/600/400', '<p>Premium offering by Nusrat Jahan. Includes priority support and extended revisions.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23'),
+	(4, 'Premium service - Nusrat Jahan', 24, 'premium-service-nusrat-jahan-24', 'https://picsum.photos/seed/prem24/600/400', '<p>Premium offering by Nusrat Jahan. Includes priority support and extended revisions.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23'),
 	(5, 'Service by Tanvir Both', 25, 'service-by-tanvir-both', 'https://picsum.photos/seed/svc25/600/400', '<p>This is a sample service offered by Tanvir Both. Delivering high-quality results on time.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23'),
 	(6, 'Premium service - Tanvir Both', 25, 'premium-service-tanvir-both-25', 'https://picsum.photos/seed/prem25/600/400', '<p>Premium offering by Tanvir Both. Includes priority support and extended revisions.</p>', '2026-09-11 10:46:23', '2026-09-11 10:46:23');
 
@@ -369,7 +384,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(1, '2014_10_12_000000_create_users_table', 1),
@@ -394,7 +409,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(20, '2023_12_08_132525_create_artisan_user_table', 1),
 	(21, '2023_12_08_175717_add_user_id_to_contact_details_table', 1),
 	(22, '2023_12_12_024921_add_video_cv_to_artisans_table', 1),
-	(23, '2026_01_11_000001_create_agent_conversations_table', 1);
+	(23, '2026_01_11_000001_create_agent_conversations_table', 1),
+	(24, '2026_09_12_235614_add_slug_to_countries_table', 1),
+	(25, '2026_09_29_034359_add_pricing_to_artisans_table', 1),
+	(26, '2026_09_29_053430_add_language_proficiencies_to_artisans_table', 1),
+	(27, '2026_10_07_012630_add_is_active_to_artisans_table', 1),
+	(28, '2026_10_30_093424_add_skills_to_artisans_table', 1);
 
 CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -454,6 +474,7 @@ CREATE TABLE IF NOT EXISTS `agent_conversation_messages` (
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+SET FOREIGN_KEY_CHECKS = 1;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;

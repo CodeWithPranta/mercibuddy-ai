@@ -1,0 +1,78 @@
+<?php
+
+return [
+    'beauty-and-wellness' => [
+        'Beauty and Wellness',
+        'Beautician',
+        'Beauty Therapist',
+        'Hairdresser',
+        'Makeup Artist',
+        'Massage Therapist',
+        'Nail Technician',
+    ],
+    'childcare' => [
+        'Babysitter',
+        'Childcare',
+        'Childcare Worker',
+        'Childminder',
+        'Daycare Assistant',
+        'Nanny',
+    ],
+    'cleaning' => [
+        'Cleaner',
+        'Cleaning',
+        'Deep Cleaning Specialist',
+        'House Cleaner',
+        'Housekeeper',
+        'Office Cleaner',
+    ],
+    'cooking-and-catering' => [
+        'Baker',
+        'Caterer',
+        'Chef',
+        'Cook',
+        'Personal Chef',
+    ],
+    'driving-and-transport' => [
+        'Chauffeur',
+        'Delivery Driver',
+        'Driver',
+        'Truck Driver',
+        'Van Driver',
+    ],
+    'elderly-and-disability-care' => [
+        'Caregiver',
+        'Companion',
+        'Disability Support Worker',
+        'Elderly Care Assistant',
+        'Home Care Assistant',
+    ],
+    'electrical-services' => [
+        'Electrician',
+        'Electrical Installer',
+        'Electrical Technician',
+        'Wiring Specialist',
+    ],
+    'fitness-and-yoga' => [
+        'Fitness Instructor',
+        'Gym Instructor',
+        'Personal Trainer',
+        'Pilates Instructor',
+        'Yoga Instructor',
+    ],
+    'plumbing-and-handyman' => [
+        'General Maintenance Worker',
+        'Handyman',
+        'Heating Engineer',
+        'Pipefitter',
+        'Plumber',
+    ],
+    'tutoring-and-education' => [
+        'Academic Tutor',
+        'English Tutor',
+        'Language Teacher',
+        'Math Tutor',
+        'Music Teacher',
+        'Science Tutor',
+    ],
+];

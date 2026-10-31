@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Artisan\Pages\ArtisanProfile;
 use App\Livewire\FilterSection;
 use App\Models\Artisan;
 use App\Models\Category;
@@ -7,6 +8,8 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\User;
+use Filament\Facades\Filament;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
@@ -104,6 +107,148 @@ test('listing shows matching artisans ranked by likes, experience, then seniorit
         ->assertDontSee('Dhaka Tutor');
 });
 
+test('listing displays the artisan skills instead of the profession details', function () {
+    $seeded = seedRouteDirectory();
+    $seeded['liked']->update(['skills' => ['Deep cleaning', 'Sanitising', 'Laundry']]);
+
+    $this->get('/artisans/bangladesh/cleaning')
+        ->assertOk()
+        ->assertSeeInOrder(['Deep cleaning', 'Sanitising', 'Laundry'])
+        ->assertDontSee('Cleaner')
+        ->assertDontSee('Full-time')
+        ->assertDontSee('Diploma');
+});
+
+test('profession options are limited to the selected category', function () {
+    $seeded = seedRouteDirectory();
+
+    $options = Category::professionOptions($seeded['cleaning']->id);
+
+    expect($options)
+        ->toHaveKey('Cleaner')
+        ->toHaveKey('Deep Cleaning Specialist')
+        ->not->toHaveKey('Electrician')
+        ->and(Category::professionOptions(null))->toBe([]);
+});
+
+test('artisan profile edit page includes the skills field', function () {
+    seedRouteDirectory();
+
+    $user = User::where('email', 'liked@test.com')->firstOrFail();
+    $user->forceFill(['email_verified_at' => now()])->save();
+
+    $this->actingAs($user)
+        ->get('/artisan/artisan-profile')
+        ->assertOk()
+        ->assertSee('Skills')
+        ->assertSee('State')
+        ->assertDontSee('All Rights Reserved');
+});
+
+test('artisan profile initializes form state for users without an artisan record', function () {
+    seedRouteDirectory();
+
+    $user = User::create([
+        'name' => 'New Artisan',
+        'email' => 'new-artisan@test.com',
+        'password' => 'password',
+        'user_type' => 2,
+        'email_verified_at' => now(),
+    ]);
+
+    $this->actingAs($user);
+    Filament::setCurrentPanel(Filament::getPanel('artisan'));
+
+    $component = Livewire::test(ArtisanProfile::class);
+
+    expect($component->get('data'))
+        ->toHaveKey('is_active')
+        ->toHaveKey('country_id')
+        ->toHaveKey('state_id')
+        ->toHaveKey('city_id')
+        ->and($component->get('data.is_active'))->toBeTrue();
+});
+
+test('artisan profile state and city options follow the selected country and state', function () {
+    $seeded = seedRouteDirectory();
+
+    $user = User::where('email', 'liked@test.com')->firstOrFail();
+    $user->forceFill(['email_verified_at' => now()])->save();
+
+    $this->actingAs($user);
+    Filament::setCurrentPanel(Filament::getPanel('artisan'));
+
+    $franceState = $seeded['france']->states()->firstOrFail();
+    $franceCity = $franceState->cities()->firstOrFail();
+
+    $component = Livewire::test(ArtisanProfile::class)
+        ->fillForm(['country_id' => $seeded['france']->id]);
+
+    $form = $component->instance()->getSchema('form');
+    $stateSelect = $form->getComponentByStatePath('state_id');
+
+    expect($stateSelect->getOptions())
+        ->toHaveKey($franceState->id)
+        ->not->toHaveKey($seeded['bangladesh']->states()->firstOrFail()->id);
+
+    expect($stateSelect->hasDynamicOptions())->toBeFalse()
+        ->and($stateSelect->getKey(isAbsolute: false))->toBe('state-'.$seeded['france']->id);
+
+    $component->fillForm(['country_id' => $seeded['bangladesh']->id]);
+
+    $form = $component->instance()->getSchema('form');
+
+    expect($form->getComponentByStatePath('state_id')->getKey(isAbsolute: false))
+        ->toBe('state-'.$seeded['bangladesh']->id);
+
+    $component->fillForm([
+        'country_id' => $seeded['france']->id,
+        'state_id' => $franceState->id,
+    ]);
+
+    $form = $component->instance()->getSchema('form');
+    $citySelect = $form->getComponentByStatePath('city_id');
+
+    expect($citySelect->getOptions())
+        ->toHaveKey($franceCity->id);
+
+    expect($citySelect->hasDynamicOptions())->toBeFalse()
+        ->and($citySelect->getKey(isAbsolute: false))->toBe('city-'.$franceState->id);
+});
+
+test('artisan profile requires between three and five skills', function () {
+    $seeded = seedRouteDirectory();
+
+    $user = User::where('email', 'liked@test.com')->firstOrFail();
+    $user->forceFill(['email_verified_at' => now()])->save();
+
+    $this->actingAs($user);
+    Filament::setCurrentPanel(Filament::getPanel('artisan'));
+
+    $requiredFields = [
+        'cover_photo' => UploadedFile::fake()->image('cover.jpg'),
+        'profile_photo' => UploadedFile::fake()->image('profile.jpg'),
+        'profession_type' => 'Full-time',
+    ];
+
+    Livewire::test(ArtisanProfile::class)
+        ->fillForm([...$requiredFields, 'skills' => ['One', 'Two']])
+        ->call('save')
+        ->assertHasFormErrors(['skills']);
+
+    Livewire::test(ArtisanProfile::class)
+        ->fillForm([...$requiredFields, 'skills' => ['One', 'Two', 'Three', 'Four', 'Five', 'Six']])
+        ->call('save')
+        ->assertHasFormErrors(['skills']);
+
+    Livewire::test(ArtisanProfile::class)
+        ->fillForm([...$requiredFields, 'skills' => ['One', 'Two', 'Three']])
+        ->call('save')
+        ->assertHasNoFormErrors(['skills']);
+
+    expect($seeded['liked']->fresh()->skills)->toBe(['One', 'Two', 'Three']);
+});
+
 test('listing displays the artisan account status', function () {
     $seeded = seedRouteDirectory();
     $seeded['liked']->update(['is_active' => false]);
@@ -128,6 +273,22 @@ test('listing can be sorted by price and satisfaction', function () {
     $this->get('/artisans/bangladesh/cleaning?sort=satisfaction_desc')
         ->assertOk()
         ->assertSeeInOrder(['Liked Artisan', 'Veteran Artisan', 'Rookie Artisan']);
+});
+
+test('country list shows Switzerland first and Bangladesh sixth', function () {
+    foreach (['Bangladesh', 'India', 'United Kingdom', 'United States', 'Canada', 'Switzerland', 'Australia', 'France'] as $index => $name) {
+        Country::create([
+            'shortname' => 'C'.$index,
+            'name' => $name,
+            'slug' => str()->slug($name),
+            'phonecode' => '+1',
+        ]);
+    }
+
+    $ordered = Country::ordered()->pluck('name')->take(8)->all();
+
+    expect($ordered[0])->toBe('Switzerland')
+        ->and($ordered[5])->toBe('Bangladesh');
 });
 
 test('clicking a category after selecting a country opens the listing', function () {

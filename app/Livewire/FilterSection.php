@@ -48,7 +48,7 @@ class FilterSection extends Component
             $this->selectedCategory = $sessionValues['category_id'] ?? null;
         }
 
-        $this->countries = Country::all();
+        $this->countries = Country::ordered();
     }
 
     public function updatedSelectedCountry(): void

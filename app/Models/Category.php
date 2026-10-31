@@ -16,4 +16,32 @@ class Category extends Model
     {
         return $this->hasMany(Artisan::class);
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function professionOptions(?int $categoryId): array
+    {
+        $category = $categoryId ? static::find($categoryId) : null;
+
+        if (! $category) {
+            return [];
+        }
+
+        $configured = config('professions.'.$category->slug, []);
+
+        $used = $category->artisans()
+            ->whereNotNull('profession')
+            ->distinct()
+            ->orderBy('profession')
+            ->pluck('profession')
+            ->all();
+
+        return collect($configured)
+            ->merge($used)
+            ->filter()
+            ->unique()
+            ->mapWithKeys(fn (string $profession): array => [$profession => $profession])
+            ->all();
+    }
 }

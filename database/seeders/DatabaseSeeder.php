@@ -36,6 +36,19 @@ class DatabaseSeeder extends Seeder
             'Driving and Transport',
         ];
 
+        $skillsByCategory = [
+            'Beauty and Wellness' => ['Beauty treatments', 'Client care', 'Appointment scheduling'],
+            'Childcare' => ['Child supervision', 'Activity planning', 'First aid'],
+            'Cleaning' => ['Deep cleaning', 'Sanitising', 'Laundry'],
+            'Elderly and Disability Care' => ['Personal care', 'Mobility support', 'Companionship'],
+            'Fitness and Yoga' => ['Workout planning', 'Yoga instruction', 'Nutrition guidance'],
+            'Plumbing and Handyman' => ['Pipe repair', 'Leak detection', 'Installation'],
+            'Tutoring and Education' => ['Lesson planning', 'Exam preparation', 'Student mentoring'],
+            'Cooking and Catering' => ['Meal planning', 'Food preparation', 'Event catering'],
+            'Electrical Services' => ['Wiring', 'Circuit repair', 'Safety inspection'],
+            'Driving and Transport' => ['Safe driving', 'Route planning', 'Vehicle checks'],
+        ];
+
         $categories = collect($categoryNames)->mapWithKeys(function (string $name): array {
             $category = Category::updateOrCreate(
                 ['slug' => Str::slug($name)],
@@ -243,6 +256,7 @@ class DatabaseSeeder extends Seeder
                     'date_of_birth' => now()->subYears(30)->format('Y-m-d'),
                     'profession' => $seed['profession'],
                     'profession_type' => $seed['profession_type'],
+                    'skills' => $skillsByCategory[$seed['category']] ?? [$seed['profession'], 'Quality work', 'Customer communication'],
                     'country_id' => $place['country']->id,
                     'state_id' => $state->id,
                     'city_id' => $city->id,
@@ -371,5 +385,7 @@ class DatabaseSeeder extends Seeder
                 ],
             );
         });
+
+        $this->call(LocationSeeder::class);
     }
 }
