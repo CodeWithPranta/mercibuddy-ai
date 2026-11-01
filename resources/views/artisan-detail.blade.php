@@ -17,7 +17,7 @@
         : '/';
     $profileUrl = route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)]);
     $callHref = $media?->phone ? 'tel:'.$media->phone : null;
-    $messageHref = $media?->email ? 'mailto:'.$media->email : ($media?->whatsapp ? 'https://wa.me/'.$media->whatsapp : null);
+    $messageHref = $media?->email ? 'mailto:'.$media->email : null;
     $languageSummary = collect($artisan->language_proficiencies ?? [])
         ->filter(fn (array $language): bool => filled($language['language'] ?? null))
         ->map(fn (array $language): string => $language['language'].(! empty($language['proficiency']) ? ' ('.$language['proficiency'].')' : ''))
@@ -91,8 +91,8 @@
                             </div>
                             <span class="whitespace-nowrap text-[11px] text-slate-500">Highly rated</span>
                             <span class="ml-auto whitespace-nowrap rounded-full bg-orange-400 px-3 py-1.5 text-xs font-bold text-white">
-                                @if ($artisan->hourly_rate !== null)
-                                    {{ $artisan->currency }} {{ rtrim(rtrim(number_format((float) $artisan->hourly_rate, 2, '.', ''), '0'), '.') }}/hour
+                                @if ($artisan->priceLabel() !== null)
+                                    {{ $artisan->priceLabel() }}
                                 @else
                                     Contact for rate
                                 @endif
@@ -107,7 +107,7 @@
                 </div>
 
                 <!-- Let's Connect -->
-                <div id="connect" class="rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4 lg:col-span-2">
+                <div id="connect" class="rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4 lg:col-span-2" x-data="{ queryOpen: @js($errors->has('phone') || $errors->has('query')) }">
                     <div class="flex flex-wrap items-start justify-between gap-4">
                         <div class="min-w-0">
                             <h2 class="text-lg font-bold text-slate-900">Let&rsquo;s Connect</h2>
@@ -137,9 +137,45 @@
                                 </button>
                             @endif
 
-                            <button type="button" class="flex h-12 w-12 items-center justify-center rounded-full bg-rose-600 text-white shadow-sm transition-colors hover:bg-rose-700" aria-label="Notifications">
+                            <button type="button" class="flex h-12 w-12 items-center justify-center rounded-full bg-rose-600 text-white shadow-sm transition-colors hover:bg-rose-700" aria-label="Send a query" aria-haspopup="dialog" @click="queryOpen = true">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                             </button>
+                        </div>
+                    </div>
+
+                    <div x-show="queryOpen" x-cloak x-transition.opacity.duration.200ms class="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/60 sm:items-center sm:p-6" @click.self="queryOpen = false" @keydown.escape.window="queryOpen = false" role="dialog" aria-modal="true" aria-labelledby="query-title">
+                        <div class="w-full rounded-t-2xl bg-white p-5 shadow-xl sm:max-w-md sm:rounded-2xl">
+                            <div class="mb-1 flex items-start justify-between gap-3">
+                                <div>
+                                    <h3 id="query-title" class="text-base font-bold text-slate-900">Send a query</h3>
+                                    <p class="mt-1 text-xs leading-snug text-slate-500">Leave your phone number and details. {{ $artisan->full_name }} gets a notification and can call you back.</p>
+                                </div>
+                                <button type="button" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200" @click="queryOpen = false" aria-label="Close query form">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="m6 6 12 12M18 6 6 18"/></svg>
+                                </button>
+                            </div>
+
+                            <form method="POST" action="{{ route('artisan.query.store', $artisan) }}" class="mt-4 flex flex-col gap-3">
+                                @csrf
+
+                                <div>
+                                    <label for="query-phone" class="text-xs font-bold text-slate-700">Your phone number</label>
+                                    <input id="query-phone" name="phone" type="tel" value="{{ old('phone') }}" placeholder="+41 79 000 00 00" required autocomplete="tel" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                                    @error('phone')
+                                        <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="query-details" class="text-xs font-bold text-slate-700">Your query</label>
+                                    <textarea id="query-details" name="query" rows="4" required placeholder="Explain what you need from {{ $artisan->full_name }}..." class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200">{{ old('query') }}</textarea>
+                                    @error('query')
+                                        <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <button type="submit" class="w-full rounded-xl bg-rose-600 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-rose-700">Send query</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -224,5 +260,6 @@
     </div>
 </div>
 
+<x-session-message />
 <livewire:footer-section />
 @endsection

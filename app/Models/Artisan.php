@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Artisan extends Model
@@ -25,6 +26,7 @@ class Artisan extends Model
         'profession_type',
         'skills',
         'hourly_rate',
+        'rate_type',
         'currency',
         'is_active',
         'language_proficiencies',
@@ -44,6 +46,74 @@ class Artisan extends Model
             'skills' => 'array',
             'language_proficiencies' => 'array',
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function rateTypeOptions(): array
+    {
+        return [
+            'Per hour' => 'Per hour',
+            'Per day' => 'Per day',
+            'Per visit' => 'Per visit',
+            'Per session' => 'Per session',
+            'Per service' => 'Per service',
+            'Per item' => 'Per item',
+            'Per trip' => 'Per trip',
+            'Per project' => 'Per project',
+            'Per kilometer' => 'Per kilometer',
+            'Fixed price' => 'Fixed price',
+            'Package' => 'Package',
+            'Price on request' => 'Price on request',
+            'Weekly' => 'Weekly',
+            'Monthly' => 'Monthly',
+            'Free' => 'Free',
+        ];
+    }
+
+    public static function rateSuffix(?string $rateType): string
+    {
+        return match ($rateType) {
+            'Per hour' => '/ hour',
+            'Per day' => '/ day',
+            'Per visit' => '/ visit',
+            'Per session' => '/ session',
+            'Per service' => '/ service',
+            'Per item' => '/ item',
+            'Per trip' => '/ trip',
+            'Per project' => '/ project',
+            'Per kilometer' => '/ km',
+            'Weekly' => '/ week',
+            'Monthly' => '/ month',
+            default => '',
+        };
+    }
+
+    public static function rateTypeUsesAmount(?string $rateType): bool
+    {
+        return ! in_array($rateType, ['Free', 'Price on request'], true);
+    }
+
+    public function priceLabel(): ?string
+    {
+        $rateType = $this->rate_type ?? 'Per hour';
+
+        if ($rateType === 'Free') {
+            return 'Free';
+        }
+
+        if ($rateType === 'Price on request') {
+            return 'Price on request';
+        }
+
+        if ($this->hourly_rate === null) {
+            return null;
+        }
+
+        $amount = rtrim(rtrim(number_format((float) $this->hourly_rate, 2, '.', ''), '0'), '.');
+
+        return trim("{$this->currency} {$amount} ".static::rateSuffix($rateType));
     }
 
     public function category(): BelongsTo
@@ -69,6 +139,16 @@ class Artisan extends Model
     public function contactDetail(): HasOne
     {
         return $this->hasOne(ContactDetail::class, 'user_id', 'user_id');
+    }
+
+    public function queries(): HasMany
+    {
+        return $this->hasMany(ArtisanQuery::class);
+    }
+
+    public function unreadQueries(): HasMany
+    {
+        return $this->queries()->unread();
     }
 
     public function likers()

@@ -123,6 +123,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Rakib Ahmed', 'email' => 'rakib@mercibuddy.com',
                 'category' => 'Beauty and Wellness', 'profession' => 'Beauty and Wellness', 'profession_type' => 'Full-time',
+                'rate_type' => 'Per session', 'hourly_rate' => 45, 'currency' => 'EUR',
                 'experience' => '5', 'country' => 'Bangladesh', 'education' => 'BSc in Computer Science',
                 'address' => '123 Sample Street, Dhaka',
                 'biography' => '<p>Experienced Beauty and Wellness with a passion for delivering quality work and helping clients achieve their goals.</p>',
@@ -130,6 +131,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Nusrat Jahan', 'email' => 'nusrat@mercibuddy.com',
                 'category' => 'Childcare', 'profession' => 'Childcare', 'profession_type' => 'Part-time',
+                'rate_type' => 'Per hour', 'hourly_rate' => 15, 'currency' => 'EUR',
                 'experience' => '7', 'country' => 'India', 'education' => 'BSc in Computer Science',
                 'address' => '123 Sample Street, Kolkata',
                 'biography' => '<p>Experienced Childcare with a passion for delivering quality work and helping clients achieve their goals.</p>',
@@ -137,6 +139,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Tanvir Both', 'email' => 'both@mercibuddy.com',
                 'category' => 'Cleaning', 'profession' => 'Cleaning', 'profession_type' => 'Contract',
+                'rate_type' => 'Per visit', 'hourly_rate' => 35, 'currency' => 'EUR',
                 'experience' => '4', 'country' => 'Bangladesh', 'education' => 'BSc in Computer Science',
                 'address' => '123 Sample Street, Dhaka',
                 'biography' => '<p>Experienced Cleaning with a passion for delivering quality work and helping clients achieve their goals.</p>',
@@ -144,6 +147,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Luca Meyer', 'email' => 'luca.meyer@mercibuddy.com',
                 'category' => 'Fitness and Yoga', 'profession' => 'Fitness Instructor', 'profession_type' => 'Full-time',
+                'rate_type' => 'Per session', 'hourly_rate' => 90, 'currency' => 'CHF',
                 'experience' => '8', 'country' => 'Switzerland', 'education' => 'Diploma in Sports Science',
                 'address' => '12 Clarastrasse, Basel',
                 'biography' => '<p>Certified fitness instructor in Basel offering personal training, gym coaching and yoga sessions across Basel-Stadt, Switzerland.</p>',
@@ -151,6 +155,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Sophie Martin', 'email' => 'sophie.martin@mercibuddy.com',
                 'category' => 'Plumbing and Handyman', 'profession' => 'Plumber', 'profession_type' => 'Full-time',
+                'rate_type' => 'Per hour', 'hourly_rate' => 40, 'currency' => 'EUR',
                 'experience' => '10', 'country' => 'France', 'education' => 'Vocational Diploma in Plumbing',
                 'address' => '8 Rue de Rennes, Rennes',
                 'biography' => '<p>Rennes plumber and handyman. I fix leaking taps, repair leaks, unblock sinks and install taps quickly across Rennes, Brittany.</p>',
@@ -158,6 +163,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Anna Keller', 'email' => 'anna.keller@mercibuddy.com',
                 'category' => 'Tutoring and Education', 'profession' => 'Science Tutor', 'profession_type' => 'Part-time',
+                'rate_type' => 'Per hour', 'hourly_rate' => 60, 'currency' => 'CHF',
                 'experience' => '6', 'country' => 'Switzerland', 'education' => 'MSc in Physics',
                 'address' => '45 Freiestrasse, Basel',
                 'biography' => '<p>Science tutor in Basel for school and university students. Tutoring in physics, chemistry, biology and mathematics.</p>',
@@ -165,6 +171,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Julien Bernard', 'email' => 'julien.bernard@mercibuddy.com',
                 'category' => 'Tutoring and Education', 'profession' => 'Science Tutor', 'profession_type' => 'Part-time',
+                'rate_type' => 'Per session', 'hourly_rate' => 30, 'currency' => 'EUR',
                 'experience' => '5', 'country' => 'France', 'education' => 'MSc in Chemistry',
                 'address' => '21 Place des Lices, Rennes',
                 'biography' => '<p>Science tutor in Rennes helping students with physics, chemistry and biology tutoring, from homework to exam preparation.</p>',
@@ -172,6 +179,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Arif Hossain', 'email' => 'arif.hossain@mercibuddy.com',
                 'category' => 'Tutoring and Education', 'profession' => 'Science Tutor', 'profession_type' => 'Full-time',
+                'rate_type' => 'Per hour', 'hourly_rate' => 20, 'currency' => 'EUR',
                 'experience' => '9', 'country' => 'Bangladesh', 'education' => 'MSc in Mathematics',
                 'address' => '77 Mirpur Road, Dhaka',
                 'biography' => '<p>Science tutor in Dhaka offering tutoring in physics, chemistry, biology and mathematics for all class levels.</p>',
@@ -179,6 +187,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Ayesha Rahman', 'email' => 'ayesha.rahman@mercibuddy.com',
                 'category' => 'Cleaning', 'profession' => 'Cleaner', 'profession_type' => 'Part-time',
+                'rate_type' => 'Monthly', 'hourly_rate' => 400, 'currency' => 'CHF',
                 'experience' => '3', 'country' => 'Switzerland', 'education' => 'Higher Secondary Certificate',
                 'address' => '3 Marktplatz, Basel',
                 'biography' => '<p>Professional cleaner in Basel for homes and offices. Housekeeping, mopping and deep cleaning across Basel-Stadt.</p>',
@@ -186,6 +195,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Priya Sharma', 'email' => 'priya.sharma@mercibuddy.com',
                 'category' => 'Childcare', 'profession' => 'Nanny', 'profession_type' => 'Full-time',
+                'rate_type' => 'Weekly', 'hourly_rate' => 500, 'currency' => 'EUR',
                 'experience' => '6', 'country' => 'France', 'education' => 'Diploma in Early Childhood Care',
                 'address' => '5 Rue Saint-Malo, Rennes',
                 'biography' => '<p>Caring nanny in Rennes for childcare and babysitting, including after-school care and weekend babysitting.</p>',
@@ -193,6 +203,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Karim Sheikh', 'email' => 'karim.sheikh@mercibuddy.com',
                 'category' => 'Cooking and Catering', 'profession' => 'Cook', 'profession_type' => 'Full-time',
+                'rate_type' => 'Per visit', 'hourly_rate' => 25, 'currency' => 'EUR',
                 'experience' => '7', 'country' => 'Bangladesh', 'state' => 'Khulna', 'city' => 'Khulna',
                 'education' => 'Diploma in Culinary Arts',
                 'address' => '12 KDA Avenue, Khulna',
@@ -201,6 +212,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Mizan Rahman', 'email' => 'mizan.rahman@mercibuddy.com',
                 'category' => 'Electrical Services', 'profession' => 'Electrician', 'profession_type' => 'Full-time',
+                'rate_type' => 'Fixed price', 'hourly_rate' => 150, 'currency' => 'EUR',
                 'experience' => '9', 'country' => 'Bangladesh', 'state' => 'Khulna', 'city' => 'Khulna',
                 'education' => 'Vocational Diploma in Electrical Work',
                 'address' => '34 Sher-E-Bangla Road, Khulna',
@@ -209,6 +221,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Jamal Uddin', 'email' => 'jamal.uddin@mercibuddy.com',
                 'category' => 'Driving and Transport', 'profession' => 'Driver', 'profession_type' => 'Full-time',
+                'rate_type' => 'Per trip', 'hourly_rate' => 18, 'currency' => 'EUR',
                 'experience' => '11', 'country' => 'Bangladesh', 'state' => 'Khulna', 'city' => 'Khulna',
                 'education' => 'Higher Secondary Certificate',
                 'address' => '8 South Central Road, Khulna',
@@ -217,6 +230,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Shirin Akter', 'email' => 'shirin.akter@mercibuddy.com',
                 'category' => 'Cleaning', 'profession' => 'Cleaner', 'profession_type' => 'Part-time',
+                'rate_type' => 'Price on request', 'hourly_rate' => null, 'currency' => 'EUR',
                 'experience' => '4', 'country' => 'Bangladesh', 'state' => 'Khulna', 'city' => 'Khulna',
                 'education' => 'Secondary School Certificate',
                 'address' => '19 Talaikhana Road, Khulna',
@@ -257,6 +271,9 @@ class DatabaseSeeder extends Seeder
                     'date_of_birth' => now()->subYears(30)->format('Y-m-d'),
                     'profession' => $seed['profession'],
                     'profession_type' => $seed['profession_type'],
+                    'hourly_rate' => $seed['hourly_rate'],
+                    'rate_type' => $seed['rate_type'],
+                    'currency' => $seed['currency'],
                     'skills' => $skillsByCategory[$seed['category']] ?? [$seed['profession'], 'Quality work', 'Customer communication'],
                     'country_id' => $place['country']->id,
                     'state_id' => $state->id,
@@ -272,9 +289,6 @@ class DatabaseSeeder extends Seeder
                 [
                     'phone' => '+880170000000'.$user->id,
                     'email' => $user->email,
-                    'facebook' => 'https://facebook.com/'.Str::slug($user->name),
-                    'linkedin' => 'https://linkedin.com/in/'.Str::slug($user->name),
-                    'whatsapp' => '+880170000000'.$user->id,
                 ],
             );
 

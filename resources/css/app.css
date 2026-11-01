@@ -10,6 +10,10 @@ select,
 a {
     -webkit-tap-highlight-color: transparent;
 }
+
+[x-cloak] {
+    display: none !important;
+}
 /* width */
 ::-webkit-scrollbar {
     width: 8px;
@@ -150,6 +154,7 @@ a {
   /* Footer logged-in indicator */
   .app-nav-icon-wrap { position: relative; display: inline-flex; }
   .app-nav-dot { position: absolute; top: -2px; right: -3px; width: 10px; height: 10px; border-radius: 999px; background: #16a34a; border: 2px solid #fff; }
+  .app-nav-badge { position: absolute; top: -7px; right: -10px; display: inline-flex; align-items: center; justify-content: center; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: #dc2626; border: 2px solid #fff; color: #fff; font-size: 9px; font-weight: 800; line-height: 1; }
 
   /* Profile session card + logout */
   .app-session-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
@@ -246,6 +251,17 @@ a {
   .app-page-form input, .app-page-form textarea { width: 100%; padding: 11px 13px; background: #fff; border: 1px solid #8ecde1; border-radius: 7px; color: #23485a; outline: 0; }
   .app-page-form input:focus, .app-page-form textarea:focus { border-color: #0873bb; box-shadow: 0 0 0 3px rgba(8, 115, 187, .14); }
   .app-page-form button { align-self: flex-start; padding: 11px 22px; border-radius: 6px; background: #0873bb; color: #fff; font-size: 14px; font-weight: 800; }
+
+  /* Customer queries / notifications */
+  .app-query-card { margin-bottom: 12px; padding: 18px; background: rgba(255, 255, 255, .8); border: 2px solid rgba(8, 115, 187, .3); border-radius: 14px; box-shadow: 0 4px 18px rgba(8, 115, 187, .08); }
+  .app-query-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .app-query-name { margin: 0; color: #0a5c96; font-size: 15px; font-weight: 800; }
+  .app-query-meta { margin: 2px 0 0; color: #7b97a6; font-size: 12px; font-weight: 600; }
+  .app-query-phone { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; background: #e7f4fc; color: #0a5c96; font-size: 13px; font-weight: 800; text-decoration: none; }
+  .app-query-phone:hover { background: #d6ecfa; }
+  .app-query-body { margin: 12px 0 0; color: #23485a; font-size: 14px; line-height: 1.6; white-space: pre-line; }
+  .app-query-link { display: inline-block; margin-top: 12px; color: #0873bb; font-size: 13px; font-weight: 800; text-decoration: none; }
+  .app-query-link:hover { text-decoration: underline; }
 
   /* Breadcrumb */
   .app-crumb { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 12.5px; font-weight: 600; color: #7b97a6; }

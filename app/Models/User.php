@@ -6,6 +6,8 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -68,5 +70,32 @@ class User extends Authenticatable implements FilamentUser
     public function dislikedArtisans()
     {
         return $this->belongsToMany(Artisan::class, 'artisan_user')->wherePivot('reaction', '=', 'dislike');
+    }
+
+    public function artisanProfile(): HasOne
+    {
+        return $this->hasOne(Artisan::class);
+    }
+
+    public function artisanQueries(): HasMany
+    {
+        return $this->hasMany(ArtisanQuery::class);
+    }
+
+    public function isArtisan(): bool
+    {
+        return in_array((int) $this->user_type, [2, 3], true);
+    }
+
+    public function unreadQueryCount(): int
+    {
+        if (! $this->isArtisan()) {
+            return 0;
+        }
+
+        return (int) ArtisanQuery::query()
+            ->where('artisan_id', $this->artisanProfile?->id)
+            ->unread()
+            ->count();
     }
 }

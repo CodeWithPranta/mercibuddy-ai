@@ -102,24 +102,17 @@ class ArtisanProfile extends Page implements HasForms
                             ->visible(fn (Get $get): bool => filled($get('profession')))
                             ->reorderable()
                             ->columnSpanFull(),
-                        Select::make('profession_type')
-                            ->options([
-                                'Full-time' => 'Full-time',
-                                'Part-time' => 'Part-time',
-                                'Contract' => 'Contract',
-                            ])
-                            ->required(),
                         TextInput::make('hourly_rate')
-                            ->label('Hourly price')
+                            ->label('Price')
                             ->numeric()
                             ->minValue(0)
-                            ->prefix(fn (callable $get): string => match ($get('currency')) {
+                            ->prefix(fn (Get $get): string => match ($get('currency')) {
                                 'GBP' => '£',
                                 'USD' => '$',
                                 'CHF' => 'CHF ',
                                 default => '€',
                             })
-                            ->suffix('/ hour'),
+                            ->visible(fn (Get $get): bool => Artisan::rateTypeUsesAmount($get('rate_type') ?? 'Per hour')),
                         Select::make('currency')
                             ->label('Currency')
                             ->options([
@@ -131,6 +124,18 @@ class ArtisanProfile extends Page implements HasForms
                             ->default('EUR')
                             ->live()
                             ->required(),
+                        Select::make('rate_type')
+                            ->label('Rate type')
+                            ->helperText('How do you charge for your services?')
+                            ->options(Artisan::rateTypeOptions())
+                            ->default('Per hour')
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, ?string $state): void {
+                                if (! Artisan::rateTypeUsesAmount($state)) {
+                                    $set('hourly_rate', null);
+                                }
+                            })
+                            ->required(),
                         Toggle::make('is_active')
                             ->label('Account status')
                             ->helperText('Active profiles are available for new requests.')
@@ -139,13 +144,7 @@ class ArtisanProfile extends Page implements HasForms
                             ->offColor('danger')
                             ->onIcon('heroicon-s-check')
                             ->offIcon('heroicon-s-x-mark'),
-                        TextInput::make('experience_in_year')
-                            ->numeric()
-                            ->required(),
 
-                        TextInput::make('last_education')->placeholder('e.g. Diploma in Computer Science')
-                            ->label('Last educational qualification')
-                            ->required(),
                         DatePicker::make('date_of_birth')
                             ->minDate(now()->subYears(100))
                             ->maxDate(now()->subYear(13))
@@ -187,21 +186,24 @@ class ArtisanProfile extends Page implements HasForms
                             ->searchable()
                             ->required(),
                         Textarea::make('address')->required(),
-                        TextInput::make('website')->placeholder('e.g. https://codewithpranta.com')->url(),
-                        TextInput::make('video_cv')->label('Video CV link')->placeholder('e.g. https://youtu.be/dZABLXpN3Lk?si=zDowB-mx72jz3rw0')->url(),
                         Repeater::make('language_proficiencies')
                             ->label('Language proficiency')
                             ->schema([
                                 Select::make('language')
                                     ->options([
                                         'English' => 'English',
-                                        'French' => 'French',
-                                        'German' => 'German',
-                                        'Bengali' => 'Bengali',
+                                        'Chinese' => 'Chinese',
+                                        'Hindi' => 'Hindi',
                                         'Spanish' => 'Spanish',
                                         'Arabic' => 'Arabic',
+                                        'French' => 'French',
+                                        'Bengali' => 'Bengali',
                                         'Portuguese' => 'Portuguese',
-                                        'Italian' => 'Italian',
+                                        'Indonesian' => 'Indonesian',
+                                        'Urdu' => 'Urdu',
+                                        'Russian' => 'Russian',
+                                        'German' => 'German',
+                                        'Japanese' => 'Japanese',
                                     ])
                                     ->required(),
                                 Select::make('proficiency')

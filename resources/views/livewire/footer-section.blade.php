@@ -3,10 +3,22 @@
         <svg class="app-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z" /></svg>
         <span>Home</span>
     </a>
-    <a href="/page/about" wire:navigate.hover class="app-nav-item" aria-label="About">
-        <svg class="app-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5" /><path stroke-linecap="round" d="M12 11v5m0-8.5v.01" /></svg>
-        <span>About</span>
-    </a>
+    @if ($showNotifications)
+        <a href="{{ route('notifications.index') }}" wire:navigate.hover class="app-nav-item {{ request()->routeIs('notifications.index') ? 'app-nav-active' : '' }}" aria-label="Notifications">
+            <span class="app-nav-icon-wrap">
+                <svg class="app-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path stroke-linecap="round" d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+                @if ($unreadQueryCount > 0)
+                    <span class="app-nav-badge" aria-label="{{ $unreadQueryCount }} unread {{ Str::plural('query', $unreadQueryCount) }}">{{ $unreadQueryCount > 9 ? '9+' : $unreadQueryCount }}</span>
+                @endif
+            </span>
+            <span>Alerts</span>
+        </a>
+    @else
+        <a href="/page/about" wire:navigate.hover class="app-nav-item" aria-label="About">
+            <svg class="app-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5" /><path stroke-linecap="round" d="M12 11v5m0-8.5v.01" /></svg>
+            <span>About</span>
+        </a>
+    @endif
     <a href="{{ Auth::check() ? route('dashboard') : route('login') }}" wire:navigate.hover class="app-nav-item {{ request()->routeIs('dashboard') ? 'app-nav-active' : '' }}" aria-label="Account">
         <span class="app-nav-icon-wrap">
             <svg class="app-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5" /><path stroke-linecap="round" d="M4.5 20c.7-3.4 3.2-5.5 7.5-5.5s6.8 2.1 7.5 5.5" /></svg>

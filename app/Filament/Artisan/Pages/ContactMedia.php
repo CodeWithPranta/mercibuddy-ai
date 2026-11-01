@@ -43,14 +43,6 @@ class ContactMedia extends Page implements HasForms
                     ->schema([
                         TextInput::make('phone')->tel()->required(),
                         TextInput::make('email')->email()->required(),
-                        TextInput::make('facebook')->label('Facebook page/profile link')
-                            ->placeholder('e.g. https://web.facebook.com/webmastermazumder')
-                            ->url(),
-                        TextInput::make('linkedin')->label('Linkedin profile link')
-                            ->placeholder('e.g. https://www.linkedin.com/in/mazumderp07')
-                            ->url(),
-                        TextInput::make('whatsapp')->label('Whatsapp number (with country code)')
-                            ->placeholder('e.g. in France start from 33')->tel(),
                     ]),
             ])
             ->statePath('data');

@@ -100,9 +100,6 @@ class FindMatchingArtisans implements Tool
                 'contact' => [
                     'phone' => $artisan->contactDetail?->phone,
                     'email' => $artisan->contactDetail?->email,
-                    'facebook' => $artisan->contactDetail?->facebook,
-                    'linkedin' => $artisan->contactDetail?->linkedin,
-                    'whatsapp' => $artisan->contactDetail?->whatsapp,
                 ],
                 'profile_url' => route('artisan.show', [
                     'artisan' => $artisan->id,

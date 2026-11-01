@@ -85,8 +85,8 @@
                                 <p class="mt-1 whitespace-nowrap text-xs text-slate-700">satisfaction rate</p>
                             </div>
                             <span class="justify-self-end whitespace-nowrap rounded-full bg-[#87382d] px-3 py-2 text-xs font-bold text-white">
-                                @if ($artisan->hourly_rate !== null)
-                                    {{ $artisan->currency }} {{ rtrim(rtrim(number_format((float) $artisan->hourly_rate, 2, '.', ''), '0'), '.') }}/hour
+                                @if ($artisan->priceLabel() !== null)
+                                    {{ $artisan->priceLabel() }}
                                 @else
                                     Contact for rate
                                 @endif

@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\ArtisanController;
+use App\Http\Controllers\ArtisanQueryController;
 use App\Http\Controllers\AssistantStreamController;
 use App\Http\Controllers\Auth\GoogleSocialiteController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DefaultPagesController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,12 @@ Route::get('/filtered-artisans', [ArtisanController::class, 'legacyIndex'])->mid
 Route::get('/artisan/{artisan}/{slug?}', [ArtisanController::class, 'detail'])
     ->middleware(['auth', 'verified'])
     ->name('artisan.show');
+Route::post('/artisan/{artisan}/query', [ArtisanQueryController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('artisan.query.store');
+Route::get('/notifications', [NotificationController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('notifications.index');
 Route::get('/artisan-detail/{id}', [ArtisanController::class, 'legacyDetail'])->middleware(['auth', 'verified']);
 Route::view('profile', 'dashboard')
     ->middleware(['auth', 'verified'])

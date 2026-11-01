@@ -228,7 +228,6 @@ test('artisan profile requires between three and five skills', function () {
     $requiredFields = [
         'cover_photo' => UploadedFile::fake()->image('cover.jpg'),
         'profile_photo' => UploadedFile::fake()->image('profile.jpg'),
-        'profession_type' => 'Full-time',
     ];
 
     Livewire::test(ArtisanProfile::class)
@@ -249,6 +248,52 @@ test('artisan profile requires between three and five skills', function () {
     expect($seeded['liked']->fresh()->skills)->toBe(['One', 'Two', 'Three']);
 });
 
+test('artisan profile can be created without profession type, experience and education', function () {
+    $seeded = seedRouteDirectory();
+
+    $user = User::create([
+        'name' => 'New Artisan',
+        'email' => 'new-artisan-profile@test.com',
+        'password' => 'password',
+        'user_type' => 2,
+        'email_verified_at' => now(),
+    ]);
+
+    $this->actingAs($user);
+    Filament::setCurrentPanel(Filament::getPanel('artisan'));
+
+    $bangladeshState = $seeded['bangladesh']->states()->firstOrFail();
+    $bangladeshCity = $bangladeshState->cities()->firstOrFail();
+
+    Livewire::test(ArtisanProfile::class)
+        ->fillForm([
+            'cover_photo' => UploadedFile::fake()->image('cover.jpg'),
+            'profile_photo' => UploadedFile::fake()->image('profile.jpg'),
+            'full_name' => 'New Artisan',
+            'category_id' => $seeded['cleaning']->id,
+            'profession' => 'Cleaner',
+            'skills' => ['Deep cleaning', 'Sanitising', 'Laundry'],
+            'currency' => 'EUR',
+            'rate_type' => 'Per day',
+            'date_of_birth' => '1990-01-01',
+            'country_id' => $seeded['bangladesh']->id,
+            'state_id' => $bangladeshState->id,
+            'city_id' => $bangladeshCity->id,
+            'address' => '1 Test Street',
+            'biography' => 'Bio',
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $artisan = Artisan::where('user_id', $user->id)->firstOrFail();
+
+    expect($artisan->profession)->toBe('Cleaner')
+        ->and($artisan->rate_type)->toBe('Per day')
+        ->and($artisan->profession_type)->toBeNull()
+        ->and($artisan->experience_in_year)->toBeNull()
+        ->and($artisan->last_education)->toBeNull();
+});
+
 test('listing displays the artisan account status', function () {
     $seeded = seedRouteDirectory();
     $seeded['liked']->update(['is_active' => false]);
@@ -257,6 +302,27 @@ test('listing displays the artisan account status', function () {
         ->assertOk()
         ->assertSee('Out of service')
         ->assertSee('Active');
+});
+
+test('listing and profile show the artisan pricing rate type', function () {
+    $seeded = seedRouteDirectory();
+
+    $seeded['liked']->update(['rate_type' => 'Per day', 'hourly_rate' => 50]);
+    $seeded['veteran']->update(['rate_type' => 'Free']);
+    $seeded['rookie']->update(['rate_type' => 'Price on request', 'hourly_rate' => null]);
+
+    $this->get('/artisans/bangladesh/cleaning')
+        ->assertOk()
+        ->assertSee('EUR 50 / day')
+        ->assertSee('Free')
+        ->assertSee('Price on request')
+        ->assertDontSee('EUR 40')
+        ->assertDontSee('EUR 15');
+
+    $this->actingAs(verifiedUser())
+        ->get('/artisan/'.$seeded['liked']->id.'/liked-artisan')
+        ->assertOk()
+        ->assertSee('EUR 50 / day');
 });
 
 test('listing can be sorted by price and satisfaction', function () {
