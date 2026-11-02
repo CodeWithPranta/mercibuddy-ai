@@ -313,7 +313,7 @@ test('listing and profile show the artisan pricing rate type', function () {
 
     $this->get('/artisans/bangladesh/cleaning')
         ->assertOk()
-        ->assertSee('EUR 50 / day')
+        ->assertSee('EUR 50/day')
         ->assertSee('Free')
         ->assertSee('Price on request')
         ->assertDontSee('EUR 40')
@@ -322,7 +322,7 @@ test('listing and profile show the artisan pricing rate type', function () {
     $this->actingAs(verifiedUser())
         ->get('/artisan/'.$seeded['liked']->id.'/liked-artisan')
         ->assertOk()
-        ->assertSee('EUR 50 / day');
+        ->assertSee('EUR 50/day');
 });
 
 test('listing can be sorted by price and satisfaction', function () {
@@ -341,7 +341,7 @@ test('listing can be sorted by price and satisfaction', function () {
         ->assertSeeInOrder(['Liked Artisan', 'Veteran Artisan', 'Rookie Artisan']);
 });
 
-test('country list shows Switzerland first and Bangladesh sixth', function () {
+test('country list is ordered alphabetically', function () {
     foreach (['Bangladesh', 'India', 'United Kingdom', 'United States', 'Canada', 'Switzerland', 'Australia', 'France'] as $index => $name) {
         Country::create([
             'shortname' => 'C'.$index,
@@ -353,8 +353,16 @@ test('country list shows Switzerland first and Bangladesh sixth', function () {
 
     $ordered = Country::ordered()->pluck('name')->take(8)->all();
 
-    expect($ordered[0])->toBe('Switzerland')
-        ->and($ordered[5])->toBe('Bangladesh');
+    expect($ordered)->toBe([
+        'Australia',
+        'Bangladesh',
+        'Canada',
+        'France',
+        'India',
+        'Switzerland',
+        'United Kingdom',
+        'United States',
+    ]);
 });
 
 test('clicking a category after selecting a country opens the listing', function () {

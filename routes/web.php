@@ -8,6 +8,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DefaultPagesController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\TechnicalSpecificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,9 @@ Route::view('profile', 'dashboard')
     ->name('dashboard');
 
 Route::get('/page/{slug}', [DefaultPagesController::class, 'index']);
+
+Route::get('/technical-specification.md', TechnicalSpecificationController::class)
+    ->name('technical-specification.download');
 
 // AI chat assistant (JS + Server-Sent Events, no Livewire roundtrip)
 Route::post('/assistant/stream', [AssistantStreamController::class, 'send'])

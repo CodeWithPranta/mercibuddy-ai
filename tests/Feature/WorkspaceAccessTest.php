@@ -89,6 +89,14 @@ test('artisans can open their panel but not the admin panel', function () {
     $this->actingAs(workspaceUser(2))->get('/admin')->assertForbidden();
 });
 
+test('artisan panel navigation includes a home link', function () {
+    $this->actingAs(workspaceUser(2))
+        ->get('/artisan')
+        ->assertOk()
+        ->assertSee('Home')
+        ->assertSee('href="'.url('/').'"', false);
+});
+
 test('admins can open the admin panel', function () {
     $this->actingAs(workspaceUser(1))->get('/admin')->assertOk();
 });

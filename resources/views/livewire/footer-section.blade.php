@@ -39,7 +39,6 @@
     <div x-show="open" x-transition class="app-menu-panel" @click.outside="open = false">
         <a href="/page/terms-of-use" wire:navigate.hover>Terms of Use</a>
         <a href="/page/privacy-policy" wire:navigate.hover>Privacy Policy</a>
-        <a href="/contact" wire:navigate.hover>Contact</a>
         @auth
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

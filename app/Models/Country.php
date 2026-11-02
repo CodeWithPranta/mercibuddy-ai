@@ -11,17 +11,6 @@ class Country extends Model
 {
     use HasFactory;
 
-    public const FEATURED_ORDER = [
-        'Switzerland',
-        'India',
-        'United Kingdom',
-        'United States',
-        'Canada',
-        'Bangladesh',
-        'Australia',
-        'France',
-    ];
-
     protected $fillable = ['shortname', 'name', 'slug', 'phonecode'];
 
     /**
@@ -29,21 +18,9 @@ class Country extends Model
      */
     public static function ordered(): Collection
     {
-        $priority = array_flip(self::FEATURED_ORDER);
-
         return static::query()
-            ->get()
-            ->sort(function (Country $first, Country $second) use ($priority): int {
-                $firstPriority = $priority[$first->name] ?? PHP_INT_MAX;
-                $secondPriority = $priority[$second->name] ?? PHP_INT_MAX;
-
-                if ($firstPriority === $secondPriority) {
-                    return strcasecmp($first->name, $second->name);
-                }
-
-                return $firstPriority <=> $secondPriority;
-            })
-            ->values();
+            ->orderBy('name')
+            ->get();
     }
 
     public function states(): HasMany

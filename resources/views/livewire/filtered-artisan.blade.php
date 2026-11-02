@@ -1,13 +1,5 @@
 <div class="app-page">
     <div class="app-page-inner">
-        <nav class="app-crumb" aria-label="Breadcrumb">
-            <a href="/" wire:navigate.hover>Home</a>
-            <span aria-hidden="true">/</span>
-            <span>{{ $country?->name }}</span>
-            <span aria-hidden="true">/</span>
-            <span class="app-crumb-current">{{ $category?->name }}</span>
-        </nav>
-
         <header class="app-results-head">
             <p class="app-eyebrow">{{ $country?->name }}</p>
             <h1 class="app-page-title">{{ $category?->name }}</h1>

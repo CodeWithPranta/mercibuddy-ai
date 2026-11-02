@@ -5,10 +5,12 @@ namespace App\Providers\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -30,11 +32,20 @@ class ArtisanPanelProvider extends PanelProvider
                 'primary' => Color::Blue,
             ])
             ->spa()
+            ->spaUrlExceptions(fn (): array => [
+                url('/'),
+            ])
             ->emailVerification()
             ->discoverResources(in: app_path('Filament/Artisan/Resources'), for: 'App\\Filament\\Artisan\\Resources')
             ->discoverPages(in: app_path('Filament/Artisan/Pages'), for: 'App\\Filament\\Artisan\\Pages')
             ->pages([
                 Dashboard::class,
+            ])
+            ->navigationItems([
+                NavigationItem::make('Home')
+                    ->url(url('/'), shouldOpenInNewTab: false)
+                    ->icon(Heroicon::OutlinedHome)
+                    ->sort(1),
             ])
             ->discoverWidgets(in: app_path('Filament/Artisan/Widgets'), for: 'App\\Filament\\Artisan\\Widgets')
             ->widgets([

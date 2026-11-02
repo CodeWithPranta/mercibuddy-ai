@@ -106,22 +106,13 @@ class ArtisanProfile extends Page implements HasForms
                             ->label('Price')
                             ->numeric()
                             ->minValue(0)
-                            ->prefix(fn (Get $get): string => match ($get('currency')) {
-                                'GBP' => '£',
-                                'USD' => '$',
-                                'CHF' => 'CHF ',
-                                default => '€',
-                            })
+                            ->prefix(fn (Get $get): string => Artisan::currencyPrefix($get('currency')))
                             ->visible(fn (Get $get): bool => Artisan::rateTypeUsesAmount($get('rate_type') ?? 'Per hour')),
                         Select::make('currency')
                             ->label('Currency')
-                            ->options([
-                                'EUR' => 'EUR (€)',
-                                'USD' => 'USD ($)',
-                                'GBP' => 'GBP (£)',
-                                'CHF' => 'CHF',
-                            ])
+                            ->options(Artisan::currencyOptions())
                             ->default('EUR')
+                            ->searchable()
                             ->live()
                             ->required(),
                         Select::make('rate_type')
@@ -191,19 +182,19 @@ class ArtisanProfile extends Page implements HasForms
                             ->schema([
                                 Select::make('language')
                                     ->options([
-                                        'English' => 'English',
-                                        'Chinese' => 'Chinese',
-                                        'Hindi' => 'Hindi',
-                                        'Spanish' => 'Spanish',
                                         'Arabic' => 'Arabic',
-                                        'French' => 'French',
                                         'Bengali' => 'Bengali',
-                                        'Portuguese' => 'Portuguese',
-                                        'Indonesian' => 'Indonesian',
-                                        'Urdu' => 'Urdu',
-                                        'Russian' => 'Russian',
+                                        'Chinese' => 'Chinese',
+                                        'English' => 'English',
+                                        'French' => 'French',
                                         'German' => 'German',
+                                        'Hindi' => 'Hindi',
+                                        'Indonesian' => 'Indonesian',
                                         'Japanese' => 'Japanese',
+                                        'Portuguese' => 'Portuguese',
+                                        'Russian' => 'Russian',
+                                        'Spanish' => 'Spanish',
+                                        'Urdu' => 'Urdu',
                                     ])
                                     ->required(),
                                 Select::make('proficiency')

@@ -20,6 +20,7 @@
     $messageHref = $media?->email ? 'mailto:'.$media->email : null;
     $languageSummary = collect($artisan->language_proficiencies ?? [])
         ->filter(fn (array $language): bool => filled($language['language'] ?? null))
+        ->sortBy(fn (array $language): string => mb_strtolower($language['language']))
         ->map(fn (array $language): string => $language['language'].(! empty($language['proficiency']) ? ' ('.$language['proficiency'].')' : ''))
         ->implode(', ');
 @endphp
@@ -107,7 +108,7 @@
                 </div>
 
                 <!-- Let's Connect -->
-                <div id="connect" class="rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4 lg:col-span-2" x-data="{ queryOpen: @js($errors->has('phone') || $errors->has('query')) }">
+                <div id="connect" class="rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4 lg:col-span-2" x-data="{ queryOpen: @js($errors->has('phone') || $errors->has('query')), inactiveNotice: false, inactiveNoticeTimer: null, showInactiveNotice() { this.inactiveNotice = true; clearTimeout(this.inactiveNoticeTimer); this.inactiveNoticeTimer = setTimeout(() => { this.inactiveNotice = false; }, 4000); } }">
                     <div class="flex flex-wrap items-start justify-between gap-4">
                         <div class="min-w-0">
                             <h2 class="text-lg font-bold text-slate-900">Let&rsquo;s Connect</h2>
@@ -117,12 +118,12 @@
                         </div>
 
                         <div class="flex w-full items-center gap-4 sm:w-auto sm:justify-end">
-                            @if ($callHref)
+                            @if ($artisan->is_active && $callHref)
                                 <a href="{{ $callHref }}" class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm transition-colors hover:bg-emerald-600" aria-label="Call">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                 </a>
                             @else
-                                <button type="button" class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm" aria-label="Call">
+                                <button type="button" @if (! $artisan->is_active) @click="showInactiveNotice()" aria-disabled="true" @endif class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm transition-colors @if ($artisan->is_active) hover:bg-emerald-600 @else cursor-not-allowed opacity-60 @endif" aria-label="{{ $artisan->is_active ? 'Call' : 'Call unavailable' }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                 </button>
                             @endif
@@ -178,23 +179,22 @@
                             </form>
                         </div>
                     </div>
+
+                    <div x-show="inactiveNotice" x-cloak x-transition.opacity.duration.200ms class="fixed inset-x-4 top-4 z-[60] mx-auto max-w-sm rounded-xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-lg sm:inset-x-auto sm:right-6 sm:top-6" role="alert" aria-live="assertive">
+                        {{ $artisan->full_name }} is not active to receive phone calls.
+                    </div>
                 </div>
 
                 <!-- Personal statement -->
-                <div class="rounded-2xl border border-slate-200 bg-[#bdf3fb] px-4 py-4">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[15px] font-semibold text-slate-900">Personal Statement</span>
-                        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                        </span>
-                    </div>
+                <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-[#bdf3fb] px-4 py-4">
+                    <span class="block text-lg font-bold text-slate-900">Personal Statement</span>
                     @if ($artisan->biography)
-                        <div class="mt-3 text-sm leading-relaxed text-slate-600">{!! $artisan->biography !!}</div>
+                        <div class="mt-3 break-words text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere]">{!! $artisan->biography !!}</div>
                     @endif
                 </div>
 
                 <!-- Service details -->
-                <div class="rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4">
+                <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4">
                     <h3 class="mb-3 text-lg font-bold text-slate-900">Service Details</h3>
 
                     @forelse ($services as $service)
@@ -222,36 +222,19 @@
                                 <img src="{{ $featuredImage }}" alt="{{ $service->title }}" class="absolute inset-0 h-32 w-full object-cover" loading="lazy" onerror="this.style.display='none'">
                             @endif
                         </div>
-                        <div class="mb-1 flex items-center gap-2">
-                            <span class="font-bold text-slate-900">{{ $service->title }}</span>
-                            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                            </span>
+                        <div class="mb-1">
+                            <span class="break-words font-bold text-slate-900 [overflow-wrap:anywhere]">{{ $service->title }}</span>
                         </div>
-                        <p class="mb-3 text-sm text-slate-600">{{ $serviceSummary }}</p>
+                        <p class="mb-3 break-words text-sm text-slate-600 [overflow-wrap:anywhere]">{{ $serviceSummary }}</p>
                     @empty
-                        <div class="mb-3 overflow-hidden rounded-lg border border-slate-300">
-                            <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" class="h-32 w-full bg-slate-100" aria-hidden="true">
-                                <rect width="400" height="140" fill="#dbe7ea"/>
-                                <rect x="0" y="90" width="400" height="50" fill="#2b3a55"/>
-                                <circle cx="70" cy="55" r="20" fill="#e2b98f"/>
-                                <rect x="45" y="75" width="50" height="45" fill="#ffffff"/>
-                                <rect x="45" y="30" width="14" height="45" fill="#e2b98f"/>
-                                <circle cx="200" cy="50" r="20" fill="#8a5a3a"/>
-                                <rect x="175" y="70" width="50" height="45" fill="#334155"/>
-                                <rect x="215" y="25" width="14" height="45" fill="#8a5a3a"/>
-                                <circle cx="320" cy="55" r="20" fill="#c98a5b"/>
-                                <rect x="295" y="75" width="50" height="45" fill="#e2e8f0"/>
-                                <rect x="335" y="30" width="14" height="45" fill="#c98a5b"/>
-                            </svg>
-                        </div>
-                        <div class="mb-1 flex items-center gap-2">
-                            <span class="font-bold text-slate-900">Highlight title</span>
-                            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/60 px-6 py-10 text-center">
+                            <span class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                                </svg>
                             </span>
+                            <p class="mt-4 break-words text-sm font-semibold text-slate-700 [overflow-wrap:anywhere]">No service details added!</p>
                         </div>
-                        <p class="text-sm text-slate-600">Add a short description that highlights this feature, value.</p>
                     @endforelse
                 </div>
 
