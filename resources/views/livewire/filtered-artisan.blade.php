@@ -5,7 +5,7 @@
             <h1 class="app-page-title">{{ $category?->name }}</h1>
             <p class="app-results-count">
                 <strong>{{ $artisans->count() }}</strong>
-                {{ Str::plural('artisan', $artisans->count()) }} available — ranked by community likes, experience and seniority
+                {{ Str::plural('artisan', $artisans->count()) }} available
             </p>
         </header>
 
@@ -33,30 +33,30 @@
                             ? $artisan->profile_photo
                             : asset('storage/'.$artisan->profile_photo);
                         $profileUrl = route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)]);
-                        $skills = array_slice(array_values(array_filter((array) $artisan->skills)), 0, 5);
+                        $skills = array_slice(array_values(array_filter((array) $artisan->skills)), 0, 4);
                     @endphp
-                    <article class="relative flex min-h-[190px] flex-col rounded-2xl border border-slate-200 bg-[#bdf3fb] p-3 shadow-sm transition hover:shadow-md sm:p-4">
-                        <div class="grid flex-1 grid-cols-[minmax(7rem,0.8fr)_minmax(0,1.5fr)] items-start gap-2 pt-2 sm:gap-3">
+                    <article class="relative flex min-h-[190px] flex-col rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition hover:shadow-md sm:p-4">
+                        <div class="grid flex-1 grid-cols-[auto_minmax(0,1fr)] items-start gap-3 pt-2 sm:gap-4">
                             <div class="flex flex-col items-start">
-                                <span class="mb-2 inline-flex h-4 w-9 items-center rounded-full bg-slate-300" title="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" aria-label="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" role="status">
-                                    <span class="h-4 w-4 rounded-full shadow-sm {{ $artisan->is_active ? 'ml-auto bg-emerald-600' : 'bg-slate-500' }}"></span>
+                                <span class="mb-2 inline-flex h-4 w-9 items-center rounded-full bg-slate-200" title="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" aria-label="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" role="status">
+                                    <span class="h-4 w-4 rounded-full shadow-sm {{ $artisan->is_active ? 'ml-auto bg-emerald-500' : 'bg-slate-400' }}"></span>
                                 </span>
                                 <a href="{{ $profileUrl }}" wire:navigate.hover class="block">
-                                    <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-200 shadow-sm">
+                                    <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-100 shadow-sm">
                                         <svg viewBox="0 0 40 40" class="h-full w-full" aria-hidden="true">
-                                            <rect width="40" height="40" fill="#3b4a5a"/>
-                                            <circle cx="20" cy="15" r="8" fill="#d8a884"/>
-                                            <path d="M4 40 C4 26 36 26 36 40 Z" fill="#e2b98f"/>
+                                            <rect width="40" height="40" fill="#334155"/>
+                                            <circle cx="20" cy="15" r="8" fill="#cbd5e1"/>
+                                            <path d="M4 40 C4 26 36 26 36 40 Z" fill="#94a3b8"/>
                                         </svg>
                                         <img src="{{ $profilePhoto }}" alt="{{ $artisan->full_name }} photo" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
                                     </div>
                                 </a>
                             </div>
 
-                            <a href="{{ $profileUrl }}" wire:navigate.hover class="block">
-                                <div class="flex h-[124px] flex-col content-start items-start gap-1 overflow-hidden rounded-2xl border-2 border-slate-300 bg-slate-200 px-3.5 py-2.5">
+                            <a href="{{ $profileUrl }}" wire:navigate.hover class="block w-full">
+                                <div class="flex h-[112px] w-full flex-col content-start items-start gap-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
                                     @forelse ($skills as $skill)
-                                        <span class="block w-fit max-w-full truncate text-[12px] font-medium leading-[1.35] text-slate-700">{{ $skill }}</span>
+                                        <span class="block w-fit max-w-full truncate text-[12px] font-semibold leading-[1.35] text-slate-700">{{ $skill }}</span>
                                     @empty
                                         <span class="text-[13px] font-medium leading-[1.5] text-slate-500">No skills added yet</span>
                                     @endforelse
@@ -64,19 +64,22 @@
                             </a>
                         </div>
 
-                        <div class="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-2">
+                        <div class="mt-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-3">
                             <div class="min-w-0">
-                                <p class="truncate text-sm font-bold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
-                                <p class="mt-1 flex items-center gap-1 truncate text-xs text-slate-700">
+                                <p class="truncate text-base font-extrabold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
+                                <p class="mt-1 truncate text-xs font-semibold text-slate-700">
+                                    {{ $artisan->profession ?: $artisan->category?->name }} · {{ $artisan->experience_in_year ?? 0 }} years experience
+                                </p>
+                                <p class="mt-1 flex items-center gap-1 truncate text-xs text-slate-500">
                                     <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg>
-                                    {{ $artisan->city?->name ?? $artisan->locationLabel() }}
+                                    {{ $artisan->locationLabel() }}
                                 </p>
                             </div>
                             <div class="text-center">
-                                <p class="text-2xl font-bold leading-none text-slate-900">{{ $artisan->satisfactionPercentage() }}%</p>
-                                <p class="mt-1 whitespace-nowrap text-xs text-slate-700">satisfaction rate</p>
+                                <p class="text-2xl font-extrabold leading-none text-slate-900">{{ $artisan->satisfactionPercentage() }}%</p>
+                                <p class="mt-1 whitespace-nowrap text-[11px] font-semibold text-slate-500">satisfaction rate</p>
                             </div>
-                            <span class="justify-self-end whitespace-nowrap rounded-full bg-[#87382d] px-3 py-2 text-xs font-bold text-white">
+                            <span class="justify-self-end whitespace-nowrap rounded-full bg-sky-600 px-3 py-2 text-[11px] font-bold text-white">
                                 @if ($artisan->priceLabel() !== null)
                                     {{ $artisan->priceLabel() }}
                                 @else
@@ -90,7 +93,7 @@
         @else
             <div class="app-empty-state">
                 <span aria-hidden="true">Oops!</span>
-                <p>No {{ strtolower($category?->name ?? 'artisan') }} available in {{ $country?->name }} at the moment.</p>
+                <p>No artisan available at the moment.</p>
                 <a href="/" wire:navigate.hover class="app-artisan-link">Try another country or craft</a>
             </div>
         @endif

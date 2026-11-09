@@ -383,7 +383,7 @@ class Artisan extends Model
 
     public function locationLabel(): string
     {
-        return collect([$this->city?->name, $this->state?->name, $this->country?->name])
+        return collect([$this->country?->name, $this->state?->name, $this->city?->name])
             ->filter()
             ->implode(', ');
     }

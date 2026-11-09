@@ -11,10 +11,6 @@
     $coverPhoto = str_starts_with((string) $artisan->cover_photo, 'http')
         ? $artisan->cover_photo
         : asset('storage/'.$artisan->cover_photo);
-    $age = (new DateTime($artisan->date_of_birth))->diff(new DateTime())->y;
-    $listingUrl = $artisan->country && $artisan->category && $artisan->country->slug && $artisan->category->slug
-        ? route('artisans.index', ['country' => $artisan->country->slug, 'category' => $artisan->category->slug])
-        : '/';
     $profileUrl = route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)]);
     $callHref = $media?->phone ? 'tel:'.$media->phone : null;
     $messageHref = $media?->email ? 'mailto:'.$media->email : null;
@@ -23,75 +19,88 @@
         ->sortBy(fn (array $language): string => mb_strtolower($language['language']))
         ->map(fn (array $language): string => $language['language'].(! empty($language['proficiency']) ? ' ('.$language['proficiency'].')' : ''))
         ->implode(', ');
+    $satisfaction = (int) $artisan->satisfactionPercentage();
+    $ratingLabel = $satisfaction >= 80 ? 'Highly rated' : ($satisfaction >= 60 ? 'Good' : ($satisfaction >= 40 ? 'Average' : 'Low rated'));
+    $ratingOptions = ['Highly rated', 'Good', 'Average', 'Low rated'];
 @endphp
 
 <div class="app-page">
     <div class="app-page-inner">
-        <nav class="app-crumb" aria-label="Breadcrumb">
-            <a href="/" wire:navigate.hover>Home</a>
-            <span aria-hidden="true">/</span>
-            <a href="{{ $listingUrl }}" wire:navigate.hover>{{ $artisan->category?->name }}</a>
-            <span aria-hidden="true">/</span>
-            <span class="app-crumb-current">{{ Str::limit($artisan->full_name, 24) }}</span>
-        </nav>
-
-        <div class="mx-auto w-full max-w-4xl">
+        <div class="mx-auto w-full max-w-5xl">
             <div class="space-y-7 lg:grid lg:grid-cols-2 lg:gap-7 lg:space-y-0">
 
                 <!-- Profile card -->
                 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
-                    <div class="relative h-28 w-full overflow-hidden">
+                    <div class="relative h-24 w-full overflow-hidden">
                         <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" class="h-full w-full" aria-hidden="true">
                             <defs>
                                 <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stop-color="#c9d6df"/>
-                                    <stop offset="100%" stop-color="#eef2f3"/>
+                                    <stop offset="0%" stop-color="#e2e8f0"/>
+                                    <stop offset="100%" stop-color="#f8fafc"/>
                                 </linearGradient>
                             </defs>
                             <rect width="400" height="140" fill="url(#sky)"/>
-                            <rect x="30" y="10" width="60" height="130" fill="#9fb0b8"/>
-                            <rect x="100" y="35" width="45" height="105" fill="#b7c4cc"/>
-                            <rect x="155" y="0" width="70" height="140" fill="#8fa2ab"/>
+                            <rect x="30" y="10" width="60" height="130" fill="#cbd5e1"/>
+                            <rect x="100" y="35" width="45" height="105" fill="#dbe3ea"/>
+                            <rect x="155" y="0" width="70" height="140" fill="#c2ccd6"/>
                             <g transform="translate(230,55)">
-                                <rect x="0" y="10" width="130" height="34" rx="14" fill="#1e2b3a"/>
-                                <circle cx="120" cy="27" r="16" fill="#d8a884"/>
-                                <rect x="20" y="18" width="70" height="18" rx="9" fill="#d8a884"/>
-                                <rect x="15" y="5" width="20" height="45" fill="#f0a93a"/>
-                                <rect x="35" y="5" width="20" height="45" fill="#2f6fb0"/>
+                                <rect x="0" y="10" width="130" height="34" rx="14" fill="#334155"/>
+                                <circle cx="120" cy="27" r="16" fill="#e2e8f0"/>
+                                <rect x="20" y="18" width="70" height="18" rx="9" fill="#e2e8f0"/>
+                                <rect x="15" y="5" width="20" height="45" fill="#fbbf24"/>
+                                <rect x="35" y="5" width="20" height="45" fill="#38bdf8"/>
                             </g>
                         </svg>
                         <img src="{{ $coverPhoto }}" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
                     </div>
 
-                    <div class="px-4 pt-3 pb-4">
-                        <div class="flex flex-wrap items-start justify-between gap-3">
-                            <div class="flex min-w-0 flex-1 items-center gap-3">
-                                <div class="relative -mt-8 h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-200">
+                    <div class="px-5 pt-4 pb-5">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div class="flex min-w-0 flex-1 items-center gap-4">
+                                <div class="relative -mt-10 h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-100 shadow-sm">
                                     <svg viewBox="0 0 40 40" class="h-full w-full" aria-hidden="true">
-                                        <rect width="40" height="40" fill="#3b4a5a"/>
-                                        <circle cx="20" cy="15" r="8" fill="#d8a884"/>
-                                        <path d="M4 40 C4 26 36 26 36 40 Z" fill="#e2b98f"/>
+                                        <rect width="40" height="40" fill="#334155"/>
+                                        <circle cx="20" cy="15" r="8" fill="#cbd5e1"/>
+                                        <path d="M4 40 C4 26 36 26 36 40 Z" fill="#94a3b8"/>
                                     </svg>
                                     <img src="{{ $profilePhoto }}" alt="{{ $artisan->full_name }} photo" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
                                 </div>
+
                                 <div class="min-w-0">
-                                    <p class="truncate text-sm font-semibold leading-tight text-slate-900">{{ $artisan->full_name }} ({{ $age }} years)</p>
-                                    <p class="truncate text-xs text-slate-500">{{ $artisan->locationLabel() }}</p>
+                                    <p class="truncate text-lg font-extrabold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
+                                    <p class="mt-1 truncate text-xs font-semibold text-slate-600">
+                                        {{ $artisan->profession ?: $artisan->category?->name }} · {{ $artisan->experience_in_year ?? 0 }} years experience
+                                    </p>
+                                    <p class="mt-1 truncate text-xs text-slate-500">{{ $artisan->locationLabel() }}</p>
+
+                                    <div class="mt-3 flex flex-wrap gap-2" aria-label="Rating">
+                                        @foreach ($ratingOptions as $option)
+                                            <span class="app-rating-pill {{ $option === $ratingLabel ? 'app-rating-pill-active' : '' }}">{{ $option }}</span>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="flex items-center gap-2">
                                 <x-share-menu :url="$profileUrl" :title="$artisan->full_name" class="h-9 w-9" />
+
+                                <a href="#service-details" class="app-document-icon" aria-label="View documents">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                    </svg>
+                                </a>
                             </div>
                         </div>
 
-                        <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-                            <span class="text-[11px] font-semibold text-slate-700">{{ $artisan->satisfactionPercentage() }}%</span>
-                            <div class="h-1.5 min-w-[6rem] flex-1 overflow-hidden rounded-full bg-slate-200">
-                                <div class="h-full bg-fuchsia-400" style="width: {{ $artisan->satisfactionPercentage() }}%"></div>
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex min-w-[180px] flex-1 items-center gap-3">
+                                <span class="text-[11px] font-bold text-slate-700">{{ $satisfaction }}%</span>
+                                <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
+                                    <div class="h-full bg-sky-500" style="width: {{ $satisfaction }}%"></div>
+                                </div>
                             </div>
-                            <span class="whitespace-nowrap text-[11px] text-slate-500">Highly rated</span>
-                            <span class="ml-auto whitespace-nowrap rounded-full bg-orange-400 px-3 py-1.5 text-xs font-bold text-white">
+
+                            <span class="whitespace-nowrap rounded-full bg-sky-600 px-3 py-2 text-xs font-bold text-white">
                                 @if ($artisan->priceLabel() !== null)
                                     {{ $artisan->priceLabel() }}
                                 @else
@@ -108,7 +117,7 @@
                 </div>
 
                 <!-- Let's Connect -->
-                <div id="connect" class="rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4 lg:col-span-2" x-data="{ queryOpen: @js($errors->has('phone') || $errors->has('query')), inactiveNotice: false, inactiveNoticeTimer: null, showInactiveNotice() { this.inactiveNotice = true; clearTimeout(this.inactiveNoticeTimer); this.inactiveNoticeTimer = setTimeout(() => { this.inactiveNotice = false; }, 4000); } }">
+                <div id="connect" class="rounded-2xl border border-slate-200 bg-white p-4 lg:col-span-2" x-data="{ queryOpen: @js($errors->has('phone') || $errors->has('query')), inactiveNotice: false, inactiveNoticeTimer: null, showInactiveNotice() { this.inactiveNotice = true; clearTimeout(this.inactiveNoticeTimer); this.inactiveNoticeTimer = setTimeout(() => { this.inactiveNotice = false; }, 4000); } }">
                     <div class="flex flex-wrap items-start justify-between gap-4">
                         <div class="min-w-0">
                             <h2 class="text-lg font-bold text-slate-900">Let&rsquo;s Connect</h2>
@@ -186,7 +195,7 @@
                 </div>
 
                 <!-- Personal statement -->
-                <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-[#bdf3fb] px-4 py-4">
+                <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white px-4 py-4">
                     <span class="block text-lg font-bold text-slate-900">Personal Statement</span>
                     @if ($artisan->biography)
                         <div class="mt-3 break-words text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere]">{!! $artisan->biography !!}</div>
@@ -194,7 +203,7 @@
                 </div>
 
                 <!-- Service details -->
-                <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-[#bdf3fb] p-4">
+                <div id="service-details" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4">
                     <h3 class="mb-3 text-lg font-bold text-slate-900">Service Details</h3>
 
                     @forelse ($services as $service)

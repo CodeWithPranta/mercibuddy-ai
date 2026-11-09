@@ -1,17 +1,7 @@
 <nav class="app-topbar" aria-label="Primary navigation">
     <div class="app-topbar-row">
         <a href="/" wire:navigate.hover class="app-brand">
-            @if ($setting?->logo)
-                @php
-                    $legacyLogoPath = public_path('photos/'.$setting->logo);
-                    $logoUrl = file_exists($legacyLogoPath)
-                        ? asset('photos/'.$setting->logo)
-                        : \Illuminate\Support\Facades\Storage::disk('public')->url($setting->logo);
-                @endphp
-                <x-custom-logo src="{{ $logoUrl }}" class="app-brand-logo" />
-            @else
-                merci<span>buddy</span>
-            @endif
+            <x-custom-logo />
         </a>
         <button type="button" class="app-ai-trigger" wire:click="$dispatch('open-assistant-chat')" aria-label="Open AI assistant chat">
             <span class="app-ai-trigger-pill">AI</span>

@@ -107,14 +107,15 @@ test('listing shows matching artisans ranked by likes, experience, then seniorit
         ->assertDontSee('Dhaka Tutor');
 });
 
-test('listing displays the artisan skills instead of the profession details', function () {
+test('listing displays the artisan skills, profession and experience', function () {
     $seeded = seedRouteDirectory();
     $seeded['liked']->update(['skills' => ['Deep cleaning', 'Sanitising', 'Laundry']]);
 
     $this->get('/artisans/bangladesh/cleaning')
         ->assertOk()
         ->assertSeeInOrder(['Deep cleaning', 'Sanitising', 'Laundry'])
-        ->assertDontSee('Cleaner')
+        ->assertSee('Cleaner')
+        ->assertSee('3 years experience')
         ->assertDontSee('Full-time')
         ->assertDontSee('Diploma');
 });

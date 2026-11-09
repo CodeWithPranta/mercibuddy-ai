@@ -2,11 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Artisan\Pages\Dashboard;
+use App\Models\Artisan;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -18,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Str;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class ArtisanPanelProvider extends PanelProvider
@@ -43,7 +45,9 @@ class ArtisanPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Home')
-                    ->url(url('/'), shouldOpenInNewTab: false)
+                    ->url(fn (): string => ($artisan = Artisan::where('user_id', auth()->id())->first())
+                        ? route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)])
+                        : url('/'))
                     ->icon(Heroicon::OutlinedHome)
                     ->sort(1),
             ])

@@ -1,6 +1,3 @@
-@php
-    $initialMessages = session('assistant_chat', []);
-@endphp
 <div class="app-chat" id="yaara-chat" aria-label="Yaara Brains chat assistant"
     data-stream-url="{{ route('assistant.stream') }}"
     data-clear-url="{{ route('assistant.clear') }}">
@@ -28,41 +25,14 @@
     </header>
 
     <div class="app-chat-body" id="yaara-chat-body">
-        @if (count($initialMessages) === 0)
-            <div class="app-chat-message app-chat-message-bot" data-greeting>
-                <p>Hi, I’m Yaara Brains. Please tell me what you need and I’ll help you find trusted skilled artisans near you. Example:</p>
-                <div class="app-chat-suggestions">
-                    <button type="button" data-suggest="I need a fitness instructor in Basel">I need a fitness instructor in Basel</button>
-                    <button type="button" data-suggest="Find someone in Rennes to fix a leaking tap">Find someone in Rennes to fix a leaking tap</button>
-                    <button type="button" data-suggest="Can you help me to find a Science tutor in my city?">Can you help me to find a Science tutor in my city?</button>
-                </div>
+        <div class="app-chat-message app-chat-message-bot" data-greeting>
+            <p>Hi, I’m Yaara Brains. Please tell me what you need and I’ll help you find trusted skilled artisans near you. Example:</p>
+            <div class="app-chat-suggestions">
+                <button type="button" data-suggest="I need a fitness instructor in Basel">I need a fitness instructor in Basel</button>
+                <button type="button" data-suggest="Find someone in Rennes to fix a leaking tap">Find someone in Rennes to fix a leaking tap</button>
+                <button type="button" data-suggest="Can you help me to find a Science tutor in my city?">Can you help me to find a Science tutor in my city?</button>
             </div>
-        @endif
-
-        @foreach ($initialMessages as $message)
-            <div class="app-chat-message {{ ($message['role'] ?? '') === 'user' ? 'app-chat-message-user' : 'app-chat-message-bot' }}">
-                <p>{{ $message['text'] ?? '' }}</p>
-                @if (! empty($message['artisans']))
-                    <div class="app-chat-artisans">
-                        @foreach ($message['artisans'] as $artisan)
-                            <a href="{{ $artisan['profile_url'] ?? '#' }}" class="app-chat-artisan">
-                                <span class="app-chat-artisan-top">
-                                    @if (! empty($artisan['photo']))
-                                        <img src="{{ $artisan['photo'] }}" alt="{{ $artisan['name'] ?? 'Artisan' }} photo" class="app-chat-artisan-photo" loading="lazy">
-                                    @endif
-                                    <span>
-                                        <span class="app-chat-artisan-name">{{ $artisan['name'] ?? '' }}</span>
-                                        <span class="app-chat-artisan-meta">{{ ($artisan['profession'] ?? '') ?: ($artisan['category'] ?? '') }} · {{ $artisan['experience_years'] ?? '' }}+ yrs</span>
-                                    </span>
-                                </span>
-                                <span class="app-chat-artisan-location">{{ ($artisan['location'] ?? '') ?: 'See profile for location' }}</span>
-                                <span class="app-chat-artisan-link">View profile</span>
-                            </a>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        @endforeach
+        </div>
     </div>
 
     <form class="app-chat-form" id="yaara-chat-form">
@@ -97,83 +67,6 @@
     var statusLine = document.getElementById('yaara-chat-status');
     var csrf = document.querySelector('meta[name="csrf-token"]');
     var busy = false;
-
-    var HISTORY_KEY = 'yaara-chat-history';
-
-    function loadHistory() {
-        try {
-            var parsed = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-            return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    function rememberMessage(role, text) {
-        if (!text) {
-            return;
-        }
-
-        var history = loadHistory();
-        history.push({ role: role, text: text });
-
-        if (history.length > 30) {
-            history = history.slice(-30);
-        }
-
-        try {
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-        } catch (e) {}
-    }
-
-    function forgetHistory() {
-        try {
-            localStorage.removeItem(HISTORY_KEY);
-        } catch (e) {}
-    }
-
-    function textBubble(role, text) {
-        var bubble = document.createElement('div');
-        bubble.className = 'app-chat-message ' + (role === 'user' ? 'app-chat-message-user' : 'app-chat-message-bot');
-
-        var paragraph = document.createElement('p');
-        paragraph.textContent = text;
-        bubble.appendChild(paragraph);
-        body.appendChild(bubble);
-    }
-
-    // If the server session has no messages (expired session) but this
-    // browser still holds a transcript backup, restore it so a refresh
-    // never wipes the conversation.
-    (function restoreBackup() {
-        var serverMessages = body.querySelectorAll('.app-chat-message-user, .app-chat-message-bot:not([data-greeting])');
-
-        if (serverMessages.length > 0) {
-            var fresh = [];
-
-            serverMessages.forEach(function (node) {
-                var paragraph = node.querySelector('p');
-                if (paragraph && paragraph.textContent) {
-                    fresh.push({
-                        role: node.classList.contains('app-chat-message-user') ? 'user' : 'assistant',
-                        text: paragraph.textContent
-                    });
-                }
-            });
-
-            try {
-                localStorage.setItem(HISTORY_KEY, JSON.stringify(fresh.slice(-30)));
-            } catch (e) {}
-
-            return;
-        }
-
-        loadHistory().forEach(function (entry) {
-            if (entry && (entry.role === 'user' || entry.role === 'assistant') && entry.text) {
-                textBubble(entry.role, entry.text);
-            }
-        });
-    })();
 
     // Tapping a footer link navigates away: close the drawer first so it
     // never covers the next page and navigation always feels instant.
@@ -388,7 +281,6 @@
                 var done = JSON.parse(payload);
                 state.finished = true;
                 shell.text.textContent = done.message || shell.text.textContent;
-                rememberMessage('assistant', shell.text.textContent);
                 if (done.artisans && done.artisans.length) {
                     shell.bubble.appendChild(artisanCards(done.artisans));
                 }
@@ -416,7 +308,6 @@
         input.value = '';
         openChat();
         userBubble(text);
-        rememberMessage('user', text);
 
         var shell = botShell();
         var state = { started: false, finished: false };
@@ -528,7 +419,6 @@
         }).finally(function () {
             body.innerHTML = '';
             body.appendChild(greetingBubble());
-            forgetHistory();
             hideError();
             scrollDown();
         });

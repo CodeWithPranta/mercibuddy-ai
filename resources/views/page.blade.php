@@ -4,7 +4,7 @@
 <livewire:navigation />
 
 <div class="app-page">
-    <div class="app-page-card">
+    <div class="app-page-card mx-auto max-w-3xl">
         <h1 class="app-page-title">{{ $page->title }}</h1>
         <div class="app-page-content">
             {!! $page->content !!}

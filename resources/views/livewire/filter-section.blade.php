@@ -1,7 +1,6 @@
 <section class="app-content">
     <div class="app-content-inner">
         <div class="app-hero">
-            <p class="app-eyebrow">Trusted local services</p>
             <h1 class="app-heading">Find skilled artisans <span>near you</span></h1>
         </div>
         <form wire:submit.prevent="filterValues" class="app-search-card">
@@ -25,7 +24,7 @@
             <div class="app-category-scroll" tabindex="0" aria-label="Scrollable category list">
                 <div class="app-category-list">
                     @foreach ($categories as $category)
-                        <button type="button" wire:click="updateSelectedCategory('{{ $category->id }}')" class="app-category-button {{ (string) $selectedCategory === (string) $category->id ? 'app-category-selected' : '' }}" aria-pressed="{{ (string) $selectedCategory === (string) $category->id ? 'true' : 'false' }}">
+                        <button type="button" wire:click="updateSelectedCategory('{{ $category->id }}')" class="app-category-button app-category-box-{{ $loop->index % 5 }} {{ (string) $selectedCategory === (string) $category->id ? 'app-category-selected' : '' }}" aria-pressed="{{ (string) $selectedCategory === (string) $category->id ? 'true' : 'false' }}">
                             <span class="app-category-icon" aria-hidden="true">{!! $category->icon ?: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-6-6h12"/></svg>' !!}</span>
                             <span class="app-category-name">{{ $category->name }}</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6" /></svg>
