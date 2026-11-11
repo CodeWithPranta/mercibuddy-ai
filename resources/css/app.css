@@ -44,73 +44,17 @@ a {
   }
 
   .landing-background {
-    background: #f6f8fb;
+    background: #c2ffe1;
     color: #0f172a;
     font-family: 'Poppins', 'Inter', ui-sans-serif, system-ui, sans-serif;
   }
 
-  /* Light neutral surface used by the artisan listing + profile pages. */
-  .surface-grey { background: #f6f8fb; }
+  /* Every page shares the same icy-teal surface. */
+  .surface-grey { background: #c2ffe1; }
 
-  /* Animated landing-page background: soft aurora orbs + faint grid. */
+  /* Landing page: one flat icy-teal surface shared by page, header and footer. */
   .landing-home {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    background: linear-gradient(120deg, #f8fafc 0%, #eef6ff 32%, #f5f3ff 64%, #ecfeff 100%);
-    background-size: 220% 220%;
-    animation: landing-gradient 20s ease-in-out infinite alternate;
-  }
-
-  .landing-home::before,
-  .landing-home::after {
-    content: '';
-    position: absolute;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .landing-home::before {
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(15, 23, 42, .035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 23, 42, .035) 1px, transparent 1px);
-    background-size: 42px 42px;
-    -webkit-mask-image: radial-gradient(ellipse at 50% 42%, #000 18%, transparent 76%);
-    mask-image: radial-gradient(ellipse at 50% 42%, #000 18%, transparent 76%);
-  }
-
-  .landing-home::after {
-    inset: -14%;
-    background:
-      radial-gradient(circle at 18% 24%, rgba(14, 165, 233, .28), transparent 55%),
-      radial-gradient(circle at 78% 28%, rgba(99, 102, 241, .22), transparent 58%),
-      radial-gradient(circle at 42% 82%, rgba(20, 184, 166, .18), transparent 60%),
-      radial-gradient(circle at 86% 76%, rgba(251, 191, 36, .15), transparent 55%);
-    animation: landing-orbs 26s ease-in-out infinite alternate;
-    will-change: transform;
-  }
-
-  .landing-home .landing-main {
-    position: relative;
-    z-index: 1;
-  }
-
-  @keyframes landing-gradient {
-    from { background-position: 0% 50%; }
-    to { background-position: 100% 50%; }
-  }
-
-  @keyframes landing-orbs {
-    from { transform: translate3d(-1.5%, -1%, 0) scale(1); }
-    to { transform: translate3d(1.5%, 1.5%, 0) scale(1.05); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .landing-home,
-    .landing-home::after {
-      animation: none;
-    }
+    background: #c2ffe1;
   }
 
   .landing-locked {
@@ -138,10 +82,10 @@ a {
     display: flex;
     align-items: center;
     padding: 0 20px;
-    background: rgba(255, 255, 255, .96);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid #dbe3ea;
+    background: #c2ffe1;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 0;
     position: sticky;
     top: 0;
     z-index: 30;
@@ -175,6 +119,8 @@ a {
     letter-spacing: -0.8px;
     line-height: 1;
     white-space: nowrap;
+    color: #dc2626;
+    text-transform: lowercase;
   }
 
   .app-content { flex: 1 1 auto; min-height: 0; padding: 20px 16px 12px; overflow: hidden; display: flex; }
@@ -229,22 +175,23 @@ a {
   .app-loading { margin-top: 8px; color: #0870b6; font-size: 12px; }
   .app-error { margin-top: 8px; color: #8b2c1a; font-size: 12px; }
 
-  .app-bottom-nav { flex: 0 0 auto; height: 68px; width: 100%; max-width: 1200px; margin: 0 auto; position: sticky; bottom: 0; z-index: 40; display: flex; align-items: stretch; justify-content: space-around; gap: 2px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, .96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #5b7b8c; border-top: 1px solid #dbe3ea; }
-  .app-nav-item { flex: 1 1 0; max-width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; color: #647f8f; text-decoration: none; border-radius: 14px; font-size: 11px; font-weight: 600; letter-spacing: .1px; background: transparent; border: 0; cursor: pointer; }
+  .app-bottom-nav { flex: 0 0 auto; height: 68px; width: 100%; max-width: 1200px; margin: 0 auto; position: sticky; bottom: 0; z-index: 40; display: flex; align-items: stretch; justify-content: space-around; gap: 2px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: #c2ffe1; backdrop-filter: none; -webkit-backdrop-filter: none; color: #5b7b8c; border-top: 1px solid rgba(15, 23, 42, .18); }
+  .app-nav-item { flex: 1 1 0; max-width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; color: #111827; text-decoration: none; border-radius: 14px; font-size: 11px; font-weight: 600; letter-spacing: .1px; background: transparent; border: 0; cursor: pointer; }
   .app-nav-item span { font-size: 11px; line-height: 1; }
-  .app-nav-icon { width: 24px; height: 24px; }
-  .app-nav-item:hover { background: rgba(14, 165, 233, .08); color: #0ea5e9; }
-  .app-nav-active { color: #0ea5e9; }
+  .app-nav-icon { width: 24px; height: 24px; stroke-width: 2.3; }
+  .app-nav-item:hover { background: rgba(15, 23, 42, .06); color: #0a3d62; }
+  .app-nav-active { color: #082f4f; }
   .app-menu-panel { position: absolute; right: 14px; bottom: 70px; z-index: 5; display: flex; flex-direction: column; gap: 2px; min-width: 190px; padding: 8px; background: #fff; border: 1px solid #d5e5ed; border-radius: 14px; box-shadow: 0 12px 32px rgba(8, 115, 187, .18); }
   .app-menu-panel a { padding: 9px 10px; border-radius: 9px; color: #123f57; font-size: 13px; font-weight: 600; text-decoration: none; }
   .app-menu-panel a:hover { background: #eef7fc; }
   .app-menu-panel .app-menu-link { display: block; width: 100%; padding: 9px 10px; border-radius: 9px; color: #b3261e; font-size: 13px; font-weight: 700; text-align: left; background: transparent; border: 0; cursor: pointer; }
   .app-menu-panel .app-menu-link:hover { background: #fdecea; }
+  .app-footer-copyright { flex: 1 1 auto; display: flex; align-items: center; justify-content: flex-start; padding: 0 10px 0 22px; color: #111827; font-size: 12.5px; font-weight: 700; letter-spacing: .2px; white-space: nowrap; }
 
   /* Footer logged-in indicator */
   .app-nav-icon-wrap { position: relative; display: inline-flex; }
-  .app-nav-dot { position: absolute; top: -2px; right: -3px; width: 10px; height: 10px; border-radius: 999px; background: #16a34a; border: 2px solid #fff; }
-  .app-nav-badge { position: absolute; top: -7px; right: -10px; display: inline-flex; align-items: center; justify-content: center; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: #dc2626; border: 2px solid #fff; color: #fff; font-size: 9px; font-weight: 800; line-height: 1; }
+  .app-nav-dot { position: absolute; top: -2px; right: -3px; width: 10px; height: 10px; border-radius: 999px; background: #16a34a; border: 2px solid #c2ffe1; }
+  .app-nav-badge { position: absolute; top: -7px; right: -10px; display: inline-flex; align-items: center; justify-content: center; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: #dc2626; border: 2px solid #c2ffe1; color: #fff; font-size: 9px; font-weight: 800; line-height: 1; }
 
   /* Profile session card + logout */
   .app-session-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
@@ -368,8 +315,8 @@ a {
   /* Listing header + search controls */
   .app-results-head { margin-bottom: 16px; }
   .app-results-head .app-page-title { margin: 0; }
-  .app-results-count { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0 0; color: #0f172a; font-size: 15px; font-weight: 700; line-height: 1.5; }
-  .app-results-count strong { color: #0ea5e9; font-size: 17px; font-weight: 800; }
+  .app-results-count { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0 0; color: #0f172a; font-size: 22px; font-weight: 800; line-height: 1.4; }
+  .app-results-count strong { color: inherit; font-size: inherit; font-weight: 800; }
   .app-searchbar { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 16px; }
   .app-searchbar-field { display: flex; align-items: center; gap: 10px; height: 50px; padding: 0 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; outline: none; box-shadow: 0 4px 14px rgba(15, 23, 42, .04); }
   .app-searchbar-field:focus-within { border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(14, 165, 233, .12); outline: none; }
@@ -419,7 +366,7 @@ a {
     .app-category-button { min-height: 58px; font-size: 16px; }
     .app-category-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
     .app-searchbar { grid-template-columns: 1fr 320px; align-items: center; }
-    .app-bottom-nav { height: 72px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; }
+    .app-bottom-nav { height: 72px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-left: 1px solid transparent; border-right: 1px solid transparent; }
     .app-nav-icon { width: 26px; height: 26px; }
     .app-page { padding-top: 48px; }
     .app-page-card { padding: 36px; }
@@ -431,9 +378,45 @@ a {
   }
 
   @media (max-width: 639px) {
+    .app-topbar { padding-top: calc(12px + env(safe-area-inset-top)); }
     .app-ai-trigger-label { display: none; }
     .app-heading { font-size: clamp(16px, 5vw, 34px); }
     .app-subheading { font-size: 14px; }
+  }
+
+  .landing-home .app-heading {
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    letter-spacing: 0;
+    font-size: clamp(34px, 10vw, 64px);
+    line-height: 1.08;
+    white-space: normal;
+    color: #000b3d;
+    -webkit-text-stroke: 1.1px #000b3d;
+  }
+
+  .landing-home .app-content {
+    padding-bottom: 28px;
+  }
+
+  .landing-home .app-search-card {
+    background: #0f5132;
+    border-color: #1f7a55;
+    box-shadow: 0 18px 40px rgba(6, 46, 30, .25);
+  }
+
+  .landing-home .app-category-head h2 {
+    color: #ffffff;
+  }
+
+  .landing-home .app-location-field {
+    background: #ffffff;
+    border-color: #b7f2d0;
+  }
+
+  .landing-home .app-heading span {
+    display: block;
+    color: inherit;
   }
 
     h3 {

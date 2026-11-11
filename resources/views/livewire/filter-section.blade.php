@@ -19,7 +19,6 @@
             <x-input-error :messages="$errors->get('selectedCountry')" class="app-error" />
             <div class="app-category-head">
                 <h2>Browse categories</h2>
-                <span>{{ $categories->count() }} crafts</span>
             </div>
             <div class="app-category-scroll" tabindex="0" aria-label="Scrollable category list">
                 <div class="app-category-list">
