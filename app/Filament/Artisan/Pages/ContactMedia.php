@@ -53,6 +53,7 @@ class ContactMedia extends Page implements HasForms
         return [
             Action::make('save')
                 ->label(__('filament-panels::resources/pages/edit-record.form.actions.save.label'))
+                ->color('success')
                 ->submit('save'),
         ];
     }

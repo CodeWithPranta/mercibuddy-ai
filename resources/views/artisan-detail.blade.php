@@ -14,14 +14,23 @@
     $profileUrl = route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)]);
     $callHref = $media?->phone ? 'tel:'.$media->phone : null;
     $messageHref = $media?->email ? 'mailto:'.$media->email : null;
+    $videoCv = str_starts_with((string) $artisan->video_cv, 'http')
+        ? $artisan->video_cv
+        : asset('storage/'.$artisan->video_cv);
     $languageSummary = collect($artisan->language_proficiencies ?? [])
         ->filter(fn (array $language): bool => filled($language['language'] ?? null))
         ->sortBy(fn (array $language): string => mb_strtolower($language['language']))
         ->map(fn (array $language): string => $language['language'].(! empty($language['proficiency']) ? ' ('.$language['proficiency'].')' : ''))
         ->implode(', ');
+    $age = filled($artisan->date_of_birth) ? \Illuminate\Support\Carbon::parse($artisan->date_of_birth)->age : null;
+    $profession = $artisan->main_profession;
+    $address = collect([$artisan->city?->name, $artisan->state?->name, $artisan->country?->name])
+        ->filter()
+        ->implode(', ');
+    $hasServiceAttachment = $services->contains(fn ($service): bool => filled($service->featured_image));
     $satisfaction = (int) $artisan->satisfactionPercentage();
-    $ratingLabel = $satisfaction >= 80 ? 'Highly rated' : ($satisfaction >= 60 ? 'Good' : ($satisfaction >= 40 ? 'Average' : 'Low rated'));
-    $ratingOptions = ['Highly rated', 'Good', 'Average', 'Low rated'];
+    $ratingLabel = $satisfaction >= 80 ? 'Excellent' : ($satisfaction >= 60 ? 'Good' : ($satisfaction >= 40 ? 'Average' : 'Unrated'));
+    $ratingOptions = ['Excellent', 'Good', 'Average', 'Unrated'];
 @endphp
 
 <div class="app-page">
@@ -31,7 +40,7 @@
 
                 <!-- Profile card -->
                 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
-                    <div class="relative h-24 w-full overflow-hidden">
+                    <div class="relative aspect-[16/7] w-full overflow-hidden rounded-t-2xl sm:aspect-[16/6]">
                         <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" class="h-full w-full" aria-hidden="true">
                             <defs>
                                 <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
@@ -67,32 +76,26 @@
                                 </div>
 
                                 <div class="min-w-0">
-                                    <p class="truncate text-lg font-extrabold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
-                                    <p class="mt-1 truncate text-xs font-semibold text-slate-600">
-                                        {{ $artisan->profession ?: $artisan->category?->name }} · {{ $artisan->experience_in_year ?? 0 }} years experience
+                                    <p class="break-words text-lg font-extrabold leading-tight text-slate-900 [overflow-wrap:anywhere]">
+                                        {{ $artisan->full_name }}@if ($age !== null), {{ $age }}@endif
                                     </p>
-                                    <p class="mt-1 truncate text-xs text-slate-500">{{ $artisan->locationLabel() }}</p>
-
-                                    <div class="mt-3 flex flex-wrap gap-2" aria-label="Rating">
-                                        @foreach ($ratingOptions as $option)
-                                            <span class="app-rating-pill {{ $option === $ratingLabel ? 'app-rating-pill-active' : '' }}">{{ $option }}</span>
-                                        @endforeach
-                                    </div>
+                                    <p class="mt-1 whitespace-nowrap text-xs font-semibold text-slate-600">
+                                        {{ $profession }}{{ filled($profession) ? ' • ' : '' }}{{ $artisan->experienceYears() }}+ years' experience
+                                    </p>
+                                    <p class="mt-1 break-words text-xs text-slate-500 [overflow-wrap:anywhere]">{{ $address }}</p>
                                 </div>
                             </div>
 
                             <div class="flex items-center gap-2">
                                 <x-share-menu :url="$profileUrl" :title="$artisan->full_name" class="h-9 w-9" />
-
-                                <a href="#service-details" class="app-document-icon" aria-label="View documents">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                                    </svg>
-                                </a>
                             </div>
                         </div>
 
-                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
+                            <p class="text-[11px] text-slate-400">Joined {{ $artisan->created_at?->format('F Y') }}</p>
+                        </div>
+
+                        <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
                             <div class="flex min-w-[180px] flex-1 items-center gap-3">
                                 <span class="text-[11px] font-bold text-slate-700">{{ $satisfaction }}%</span>
                                 <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
@@ -107,11 +110,15 @@
                                     Contact for rate
                                 @endif
                             </span>
+                            <livewire:like-dislike :artisan="$artisan" />
                         </div>
 
                         <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
-                            <p class="text-[11px] text-slate-400">Joined {{ $artisan->created_at?->format('F Y') }}</p>
-                            <livewire:like-dislike :artisan="$artisan" />
+                            <div class="flex flex-wrap gap-2" aria-label="Rating">
+                                @foreach ($ratingOptions as $option)
+                                    <span class="app-rating-pill {{ $option === $ratingLabel ? 'app-rating-pill-active' : '' }}">{{ $option }}</span>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -196,7 +203,16 @@
 
                 <!-- Personal statement -->
                 <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                    <span class="block text-lg font-bold text-slate-900">Personal Statement</span>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="block text-lg font-bold text-slate-900">Personal Statement</span>
+                        @if (filled($artisan->video_cv))
+                            <a href="{{ $videoCv }}" class="app-document-icon shrink-0" aria-label="View personal statement attachment">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                </svg>
+                            </a>
+                        @endif
+                    </div>
                     @if ($artisan->biography)
                         <div class="mt-3 break-words text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere]">{!! $artisan->biography !!}</div>
                     @endif
@@ -204,7 +220,16 @@
 
                 <!-- Service details -->
                 <div id="service-details" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4">
-                    <h3 class="mb-3 text-lg font-bold text-slate-900">Service Details</h3>
+                    <div class="mb-3 flex items-center justify-between gap-3">
+                        <h3 class="text-lg font-bold text-slate-900">Service Details</h3>
+                        @if ($hasServiceAttachment)
+                            <a href="#service-details" class="app-document-icon shrink-0" aria-label="View service attachment">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                </svg>
+                            </a>
+                        @endif
+                    </div>
 
                     @forelse ($services as $service)
                         @php

@@ -149,12 +149,12 @@ test('the footer shows alerts for artisans and customers with queries', function
 
     $this->actingAs($artisanUser);
     Livewire::test(FooterSection::class)
-        ->assertSee('Alerts')
+        ->assertSee('Notifications')
         ->assertDontSee('About');
 
     $this->actingAs($customer);
     Livewire::test(FooterSection::class)
-        ->assertSee('Alerts')
+        ->assertSee('Notifications')
         ->assertDontSee('About');
 });
 
@@ -164,7 +164,7 @@ test('the footer keeps the about link for users without queries', function () {
     $this->actingAs($customer);
     Livewire::test(FooterSection::class)
         ->assertSee('About')
-        ->assertDontSee('Alerts');
+        ->assertDontSee('Notifications');
 });
 
 test('the artisan profile bell opens the query form', function () {

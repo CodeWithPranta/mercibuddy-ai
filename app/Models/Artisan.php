@@ -23,6 +23,7 @@ class Artisan extends Model
         'last_education',
         'date_of_birth',
         'profession',
+        'main_profession',
         'profession_type',
         'skills',
         'hourly_rate',

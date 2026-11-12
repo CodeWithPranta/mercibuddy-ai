@@ -91,6 +91,10 @@ class ArtisanProfile extends Page implements HasForms
                             ->searchable()
                             ->live()
                             ->required(),
+                        TextInput::make('main_profession')
+                            ->label('Main profession')
+                            ->helperText('Shown on your listing card.')
+                            ->maxLength(255),
                         TagsInput::make('skills')
                             ->label('Skills')
                             ->helperText('Add 3 to 5 skills. These are shown on your listing card.')
@@ -224,6 +228,7 @@ class ArtisanProfile extends Page implements HasForms
         return [
             Action::make('save')
                 ->label(__('filament-panels::resources/pages/edit-record.form.actions.save.label'))
+                ->color('success')
                 ->submit('save'),
         ];
     }

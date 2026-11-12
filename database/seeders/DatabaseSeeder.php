@@ -122,7 +122,7 @@ class DatabaseSeeder extends Seeder
         $artisanSeeds = [
             [
                 'name' => 'Rakib Ahmed', 'email' => 'rakib@mercibuddy.com',
-                'category' => 'Beauty and Wellness', 'profession' => 'Beauty and Wellness', 'profession_type' => 'Full-time',
+                'category' => 'Beauty and Wellness', 'profession' => 'Beauty and Wellness', 'main_profession' => 'Beautician', 'profession_type' => 'Full-time',
                 'rate_type' => 'Per session', 'hourly_rate' => 45, 'currency' => 'EUR',
                 'experience' => '5', 'country' => 'Bangladesh', 'education' => 'BSc in Computer Science',
                 'address' => '123 Sample Street, Dhaka',
@@ -130,7 +130,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Nusrat Jahan', 'email' => 'nusrat@mercibuddy.com',
-                'category' => 'Childcare', 'profession' => 'Childcare', 'profession_type' => 'Part-time',
+                'category' => 'Childcare', 'profession' => 'Childcare', 'main_profession' => 'Babysitter', 'profession_type' => 'Part-time',
                 'rate_type' => 'Per hour', 'hourly_rate' => 15, 'currency' => 'EUR',
                 'experience' => '7', 'country' => 'India', 'education' => 'BSc in Computer Science',
                 'address' => '123 Sample Street, Kolkata',
@@ -138,7 +138,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Tanvir Both', 'email' => 'both@mercibuddy.com',
-                'category' => 'Cleaning', 'profession' => 'Cleaning', 'profession_type' => 'Contract',
+                'category' => 'Cleaning', 'profession' => 'Cleaning', 'main_profession' => 'Cleaner', 'profession_type' => 'Contract',
                 'rate_type' => 'Per visit', 'hourly_rate' => 35, 'currency' => 'EUR',
                 'experience' => '4', 'country' => 'Bangladesh', 'education' => 'BSc in Computer Science',
                 'address' => '123 Sample Street, Dhaka',
@@ -270,6 +270,7 @@ class DatabaseSeeder extends Seeder
                     'last_education' => $seed['education'],
                     'date_of_birth' => now()->subYears(30)->format('Y-m-d'),
                     'profession' => $seed['profession'],
+                    'main_profession' => $seed['main_profession'] ?? $seed['profession'],
                     'profession_type' => $seed['profession_type'],
                     'hourly_rate' => $seed['hourly_rate'],
                     'rate_type' => $seed['rate_type'],

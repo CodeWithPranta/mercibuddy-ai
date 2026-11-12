@@ -31,7 +31,7 @@ class ArtisanPanelProvider extends PanelProvider
             ->path('artisan')
             ->login()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Slate,
             ])
             ->spa()
             ->spaUrlExceptions(fn (): array => [
