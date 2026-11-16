@@ -5,8 +5,7 @@
         <div class="app-chat-identity">
             <span class="app-chat-avatar" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z" />
-                    <path stroke-linecap="round" d="M19 15.5 19.8 17.7 22 18.5 19.8 19.3 19 21.5 18.2 19.3 16 18.5 18.2 17.7 19 15.5Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 4.5a3 3 0 0 0-5.5 1.7c0 .55.15 1.06.4 1.5A3.5 3.5 0 0 0 5.5 14a3 3 0 0 0 3 4.5h.5V4.5Zm5 0a3 3 0 0 1 5.5 1.7c0 .55-.15 1.06-.4 1.5a3.5 3.5 0 0 1-1.1 6.3 3 3 0 0 1-3 4.5h-.5V4.5ZM12 4v16M8 8h2m-3 4h3m6-4h-2m3 4h-3" />
                 </svg>
             </span>
             <div>
