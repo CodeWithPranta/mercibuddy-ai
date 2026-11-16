@@ -314,16 +314,16 @@ test('listing and profile show the artisan pricing rate type', function () {
 
     $this->get('/artisans/bangladesh/cleaning')
         ->assertOk()
-        ->assertSee('EUR 50/day')
+        ->assertSee('€50/day')
         ->assertSee('Free')
         ->assertSee('Price on request')
-        ->assertDontSee('EUR 40')
-        ->assertDontSee('EUR 15');
+        ->assertDontSee('€40')
+        ->assertDontSee('€15');
 
     $this->actingAs(verifiedUser())
         ->get('/artisan/'.$seeded['liked']->id.'/liked-artisan')
         ->assertOk()
-        ->assertSee('EUR 50/day');
+        ->assertSee('€50/day');
 });
 
 test('listing can be sorted by price and satisfaction', function () {

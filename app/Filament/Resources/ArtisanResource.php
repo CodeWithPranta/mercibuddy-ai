@@ -86,9 +86,6 @@ class ArtisanResource extends Resource
                     ))
                     ->searchable()
                     ->required(),
-                TextInput::make('main_profession')
-                    ->label('Main profession')
-                    ->maxLength(255),
                 TagsInput::make('skills')
                     ->label('Skills')
                     ->helperText('Add 3 to 5 skills. These are shown on the listing card.')
@@ -184,8 +181,6 @@ class ArtisanResource extends Resource
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('profession')
-                    ->searchable(),
-                TextColumn::make('main_profession')
                     ->searchable(),
                 TextColumn::make('profession_type')
                     ->searchable(),

@@ -91,10 +91,11 @@ class ArtisanProfile extends Page implements HasForms
                             ->searchable()
                             ->live()
                             ->required(),
-                        TextInput::make('main_profession')
-                            ->label('Main profession')
-                            ->helperText('Shown on your listing card.')
-                            ->maxLength(255),
+                        TextInput::make('experience_in_year')
+                            ->label('Years of experience')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100),
                         TagsInput::make('skills')
                             ->label('Skills')
                             ->helperText('Add 3 to 5 skills. These are shown on your listing card.')

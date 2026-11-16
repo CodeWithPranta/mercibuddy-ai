@@ -23,7 +23,6 @@ class Artisan extends Model
         'last_education',
         'date_of_birth',
         'profession',
-        'main_profession',
         'profession_type',
         'skills',
         'hourly_rate',
@@ -312,7 +311,7 @@ class Artisan extends Model
 
         $amount = rtrim(rtrim(number_format((float) $this->hourly_rate, 2, '.', ''), '0'), '.');
 
-        return trim("{$this->currency} {$amount}".static::rateSuffix($rateType));
+        return trim(static::currencyPrefix($this->currency).$amount.static::rateSuffix($rateType));
     }
 
     public function category(): BelongsTo
