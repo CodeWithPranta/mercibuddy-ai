@@ -17,7 +17,7 @@ function seedFilterPersistence(): array
     return compact('cleaning', 'tutoring', 'bangladesh');
 }
 
-test('guest returning to the landing page sees the previous category highlighted', function () {
+test('guest returning to the landing page sees the previous country but no category highlighted', function () {
     $seeded = seedFilterPersistence();
 
     $this->withSession(['filter_values' => [
@@ -29,10 +29,10 @@ test('guest returning to the landing page sees the previous category highlighted
 
     Livewire::test(FilterSection::class)
         ->assertSet('selectedCountry', $seeded['bangladesh']->id)
-        ->assertSet('selectedCategory', $seeded['cleaning']->id);
+        ->assertSet('selectedCategory', null);
 });
 
-test('authenticated user returning sees the previous category highlighted', function () {
+test('authenticated user returning sees the previous country but no category highlighted', function () {
     $seeded = seedFilterPersistence();
 
     $user = User::create([
@@ -55,10 +55,10 @@ test('authenticated user returning sees the previous category highlighted', func
 
     Livewire::test(FilterSection::class)
         ->assertSet('selectedCountry', $seeded['bangladesh']->id)
-        ->assertSet('selectedCategory', $seeded['cleaning']->id);
+        ->assertSet('selectedCategory', null);
 });
 
-test('clicking a new category replaces the previous highlight', function () {
+test('clicking a new category highlights it and opens the listing', function () {
     $seeded = seedFilterPersistence();
 
     $this->withSession(['filter_values' => [
@@ -69,7 +69,7 @@ test('clicking a new category replaces the previous highlight', function () {
     ]]);
 
     Livewire::test(FilterSection::class)
-        ->assertSet('selectedCategory', $seeded['cleaning']->id)
+        ->assertSet('selectedCategory', null)
         ->call('updateSelectedCategory', $seeded['tutoring']->id)
         ->assertSet('selectedCategory', $seeded['tutoring']->id)
         ->assertRedirect('/artisans/bangladesh/tutoring');
@@ -86,7 +86,7 @@ test('changing the country clears the category highlight', function () {
     ]]);
 
     Livewire::test(FilterSection::class)
-        ->assertSet('selectedCategory', $seeded['cleaning']->id)
+        ->assertSet('selectedCategory', null)
         ->set('selectedCountry', null)
         ->assertSet('selectedCategory', null);
 });

@@ -76,5 +76,5 @@ test('landing page renders the JS chat widget', function () {
     $this->get('/')->assertOk()
         ->assertSee('yaara-chat', false)
         ->assertSee('assistant/stream', false)
-        ->assertSee('Describe what you need..', false);
+        ->assertSee('Find a Buddy...', false);
 });

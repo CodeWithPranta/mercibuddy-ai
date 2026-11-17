@@ -1,4 +1,4 @@
-<div class="app-chat" id="yaara-chat" aria-label="Yaara Brains chat assistant"
+<div class="app-chat" id="yaara-chat" aria-label="Yaara chat assistant"
     data-stream-url="{{ route('assistant.stream') }}"
     data-clear-url="{{ route('assistant.clear') }}">
     <header class="app-chat-header">
@@ -9,7 +9,7 @@
                 </svg>
             </span>
             <div>
-                <p class="app-chat-title">Yaara Brains</p>
+                <p class="app-chat-title">Yaara</p>
                 <p class="app-chat-status" id="yaara-chat-status">Online</p>
             </div>
         </div>
@@ -25,7 +25,7 @@
 
     <div class="app-chat-body" id="yaara-chat-body">
         <div class="app-chat-message app-chat-message-bot" data-greeting>
-            <p>Hi, I’m Yaara Brains. Please tell me what you need and I’ll help you find trusted skilled artisans near you. Example:</p>
+            <p>Hi, I am Yaara. Please tell me what service do you need and I will help you find trusted skilled artisans near you. Example:</p>
             <div class="app-chat-suggestions">
                 <button type="button" data-suggest="I need a fitness instructor in Basel">I need a fitness instructor in Basel</button>
                 <button type="button" data-suggest="Find someone in Rennes to fix a leaking tap">Find someone in Rennes to fix a leaking tap</button>
@@ -35,11 +35,11 @@
     </div>
 
     <form class="app-chat-form" id="yaara-chat-form">
-        <label for="yaara-chat-input" class="sr-only">Message Yaara Brains</label>
+        <label for="yaara-chat-input" class="sr-only">Message Yaara</label>
         <input
             id="yaara-chat-input"
             type="text"
-            placeholder="Describe what you need.."
+            placeholder="Find a Buddy..."
             class="app-chat-input"
             autocomplete="off"
             maxlength="500"
@@ -142,7 +142,7 @@
         bubble.setAttribute('data-greeting', '');
 
         var text = document.createElement('p');
-        text.textContent = 'Hi, I’m Yaara Brains. Please tell me what you need and I’ll help you find trusted skilled artisans near you. Example:';
+        text.textContent = 'Hi, I am Yaara. Please tell me what service do you need and I will help you find trusted skilled artisans near you. Example:';
         bubble.appendChild(text);
 
         var suggestions = document.createElement('div');

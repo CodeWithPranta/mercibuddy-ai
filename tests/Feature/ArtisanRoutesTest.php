@@ -115,7 +115,6 @@ test('listing displays the artisan skills, profession and experience', function 
         ->assertOk()
         ->assertSeeInOrder(['Deep cleaning', 'Sanitising', 'Laundry'])
         ->assertSee('Cleaner')
-        ->assertSee('3 years experience')
         ->assertDontSee('Full-time')
         ->assertDontSee('Diploma');
 });

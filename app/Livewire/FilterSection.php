@@ -26,26 +26,23 @@ class FilterSection extends Component
 
     public function mount()
     {
-        // Remember the country and category (useful when coming back
-        // from the listing page): the previous category stays
-        // highlighted until the visitor picks a new one, which replaces
-        // it, or picks another country, which clears it.
+        // Remember the country when coming back from the listing page, but
+        // never restore the previous category: a fresh visit (including a
+        // browser refresh) should start with no category highlighted.
         $this->selectedCategory = null;
 
         if (auth()->check()) {
-            // User is authenticated, load filter values from the database
+            // User is authenticated, load the country from the database
             $user = auth()->user();
             $filterValues = FilterValue::where('user_id', $user->id)->first();
 
             if ($filterValues) {
                 $this->selectedCountry = $filterValues->country_id;
-                $this->selectedCategory = $filterValues->category_id;
             }
         } elseif (session()->has('filter_values')) {
-            // User is not authenticated, check for session filter values
+            // User is not authenticated, check for session country
             $sessionValues = session('filter_values');
             $this->selectedCountry = $sessionValues['country_id'];
-            $this->selectedCategory = $sessionValues['category_id'] ?? null;
         }
 
         $this->countries = Country::ordered();

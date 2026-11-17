@@ -35,7 +35,7 @@
                         $profileUrl = route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)]);
                         $skills = array_slice(array_values(array_filter((array) $artisan->skills)), 0, 5);
                     @endphp
-                    <article class="relative flex min-h-[190px] flex-col rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition hover:shadow-md sm:p-4">
+                    <article class="relative flex min-h-[190px] flex-col rounded-2xl border-2 border-emerald-300 bg-white p-3 shadow-sm transition hover:border-emerald-400 hover:shadow-md sm:p-4">
                         <div class="grid flex-1 grid-cols-[auto_minmax(0,1fr)] items-start gap-3 pt-2 sm:gap-4">
                             <div class="flex flex-col items-start">
                                 <span class="mb-2 inline-flex h-4 w-9 items-center rounded-full bg-slate-200" title="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" aria-label="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" role="status">
@@ -75,7 +75,7 @@
                                     {{ $artisan->city?->name ?: ($artisan->state?->name ?: $artisan->country?->name) }}
                                 </p>
                             </div>
-                            <div class="text-center">
+                            <div class="flex w-24 shrink-0 flex-col items-center justify-center text-center">
                                 <p class="text-2xl font-extrabold leading-none text-slate-900">{{ $artisan->satisfactionPercentage() }}%</p>
                                 <p class="mt-1 whitespace-nowrap text-[11px] font-semibold text-slate-500">satisfaction rate</p>
                             </div>

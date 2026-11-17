@@ -25,8 +25,31 @@
         ->filter()
         ->implode(', ');
     $satisfaction = (int) $artisan->satisfactionPercentage();
-    $ratingLabel = $satisfaction >= 80 ? 'Excellent' : ($satisfaction >= 60 ? 'Good' : ($satisfaction >= 40 ? 'Average' : 'Unrated'));
-    $ratingOptions = ['Excellent', 'Good', 'Average', 'Unrated'];
+    $videoCvUrl = filled($artisan->video_cv)
+        ? (str_starts_with((string) $artisan->video_cv, 'http')
+            ? $artisan->video_cv
+            : (\Illuminate\Support\Facades\Storage::disk('public')->exists((string) $artisan->video_cv)
+                ? asset('storage/'.$artisan->video_cv)
+                : null))
+        : null;
+    $serviceAttachmentUrl = $services
+        ->map(function ($service): ?string {
+            $image = (string) $service->featured_image;
+
+            if ($image === '') {
+                return null;
+            }
+
+            if (str_starts_with($image, 'http')) {
+                return $image;
+            }
+
+            return \Illuminate\Support\Facades\Storage::disk('public')->exists($image)
+                ? asset('storage/'.$image)
+                : null;
+        })
+        ->filter()
+        ->first();
 @endphp
 
 <div class="app-page">
@@ -36,7 +59,7 @@
 
                 <!-- Profile card -->
                 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
-                    <div class="relative aspect-[16/7] w-full overflow-hidden rounded-t-2xl sm:aspect-[16/6]">
+                    <div class="relative h-32 w-full overflow-hidden sm:h-40">
                         <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" class="h-full w-full" aria-hidden="true">
                             <defs>
                                 <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
@@ -59,10 +82,10 @@
                         <img src="{{ $coverPhoto }}" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
                     </div>
 
-                    <div class="px-5 pt-4 pb-5">
+                    <div class="px-4 pb-5 sm:px-6 sm:pb-6">
                         <div class="flex flex-wrap items-start justify-between gap-4">
-                            <div class="flex min-w-0 flex-1 items-center gap-4">
-                                <div class="relative -mt-10 h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-white bg-slate-100 shadow-sm">
+                            <div class="flex min-w-0 flex-1 items-start gap-4">
+                                <div class="relative -mt-12 h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow sm:-mt-16 sm:h-32 sm:w-32">
                                     <svg viewBox="0 0 40 40" class="h-full w-full" aria-hidden="true">
                                         <rect width="40" height="40" fill="#334155"/>
                                         <circle cx="20" cy="15" r="8" fill="#cbd5e1"/>
@@ -71,50 +94,52 @@
                                     <img src="{{ $profilePhoto }}" alt="{{ $artisan->full_name }} photo" class="absolute inset-0 h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
                                 </div>
 
-                                <div class="min-w-0">
-                                    <p class="break-words text-lg font-extrabold leading-tight text-slate-900 [overflow-wrap:anywhere]">
-                                        {{ $artisan->full_name }}@if ($age !== null), {{ $age }}@endif
+                                <div class="min-w-0 flex-1 pt-1">
+                                    <p class="break-words text-2xl font-extrabold leading-tight text-slate-900 [overflow-wrap:anywhere] sm:text-3xl">
+                                        {{ $artisan->full_name }}@if ($age !== null) <span class="font-semibold text-slate-700">({{ $age }})</span>@endif
                                     </p>
-                                    <p class="mt-1 whitespace-nowrap text-xs font-semibold text-slate-600">
-                                        {{ $profession }}{{ filled($profession) ? ' • ' : '' }}{{ $artisan->experienceYears() }}+ years' experience
+                                    <p class="mt-1 break-words text-sm font-semibold text-slate-800 [overflow-wrap:anywhere] sm:text-base">
+                                        {{ $profession }}{{ filled($profession) ? ' • ' : '' }}{{ $artisan->experienceYears() }} yrs exp.
                                     </p>
-                                    <p class="mt-1 break-words text-xs text-slate-500 [overflow-wrap:anywhere]">{{ $address }}</p>
+                                    <p class="mt-1 flex items-center gap-1.5 break-words text-sm text-slate-700 [overflow-wrap:anywhere]">
+                                        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                                        {{ $address }}
+                                    </p>
+                                    <p class="mt-1 flex items-center gap-1.5 text-sm text-slate-700">
+                                        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path stroke-linecap="round" d="M8 3v4m8-4v4M3.5 10h17"/></svg>
+                                        Joined {{ $artisan->created_at?->format('M Y') }}
+                                    </p>
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-2">
-                                <x-share-menu :url="$profileUrl" :title="$artisan->full_name" class="h-9 w-9" />
+                            <div class="flex w-full items-end justify-between gap-3 sm:w-auto sm:flex-col sm:items-end sm:border-l sm:border-slate-300 sm:pl-4">
+                                <x-share-menu :url="$profileUrl" :title="$artisan->full_name" class="h-10 w-10 !bg-white !text-slate-900 border border-slate-300 shadow-sm hover:!bg-slate-100" />
+                                <span class="whitespace-nowrap rounded-xl bg-[#d9f7c6] px-3 py-2 text-xl font-extrabold leading-none text-[#15803d] sm:px-4 sm:text-2xl">
+                                    @if ($artisan->priceLabel() !== null)
+                                        {{ $artisan->priceLabel() }}
+                                    @else
+                                        Contact for rate
+                                    @endif
+                                </span>
                             </div>
                         </div>
 
-                        <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
-                            <p class="text-[11px] text-slate-400">Joined {{ $artisan->created_at?->format('F Y') }}</p>
-                        </div>
-
-                        <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex min-w-[180px] flex-1 items-center gap-3">
-                                <span class="text-[11px] font-bold text-slate-700">{{ $satisfaction }}%</span>
-                                <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
-                                    <div class="h-full bg-sky-500" style="width: {{ $satisfaction }}%"></div>
-                                </div>
+                        <div class="mt-5 border-t border-slate-200 pt-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <p class="text-lg font-extrabold text-slate-900">Customer satisfaction</p>
+                                <p class="text-3xl font-extrabold leading-none text-slate-900">{{ $satisfaction }}%</p>
+                            </div>
+                            <div class="mt-2 h-3 w-full overflow-hidden rounded-full bg-slate-200">
+                                <div class="h-full rounded-full bg-gradient-to-r from-green-700 via-green-500 to-lime-400" style="width: {{ $satisfaction }}%"></div>
                             </div>
 
-                            <span class="whitespace-nowrap rounded-full bg-sky-600 px-3 py-2 text-xs font-bold text-white">
-                                @if ($artisan->priceLabel() !== null)
-                                    {{ $artisan->priceLabel() }}
-                                @else
-                                    Contact for rate
-                                @endif
-                            </span>
-                            <livewire:like-dislike :artisan="$artisan" />
+                            <div class="mt-3">
+                                <livewire:like-dislike :artisan="$artisan" />
+                            </div>
                         </div>
 
-                        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
-                            <div class="flex flex-wrap gap-2" aria-label="Rating">
-                                @foreach ($ratingOptions as $option)
-                                    <span class="app-rating-pill {{ $option === $ratingLabel ? 'app-rating-pill-active' : '' }}">{{ $option }}</span>
-                                @endforeach
-                            </div>
+                        <div class="mt-5 border-t border-slate-200 pt-4">
+                            <livewire:artisan-reviews :artisan="$artisan" />
                         </div>
                     </div>
                 </div>
@@ -199,7 +224,14 @@
 
                 <!-- Personal statement -->
                 <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                    <span class="block text-lg font-bold text-slate-900">Personal Statement</span>
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="block text-lg font-bold text-slate-900">Personal Statement</span>
+                        @if ($videoCvUrl)
+                            <a href="{{ $videoCvUrl }}" target="_blank" rel="noopener" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 transition hover:bg-emerald-100" title="View attached file" aria-label="View attached file">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                            </a>
+                        @endif
+                    </div>
                     @if ($artisan->biography)
                         <div class="mt-3 break-words text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere]">{!! $artisan->biography !!}</div>
                     @endif
@@ -207,7 +239,14 @@
 
                 <!-- Service details -->
                 <div id="service-details" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4">
-                    <h3 class="mb-3 text-lg font-bold text-slate-900">Service Details</h3>
+                    <div class="mb-3 flex items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-slate-900">Service Details</h3>
+                        @if ($serviceAttachmentUrl)
+                            <a href="{{ $serviceAttachmentUrl }}" target="_blank" rel="noopener" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 transition hover:bg-emerald-100" title="View service attachment" aria-label="View service attachment">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                            </a>
+                        @endif
+                    </div>
 
                     @forelse ($services as $service)
                         @php

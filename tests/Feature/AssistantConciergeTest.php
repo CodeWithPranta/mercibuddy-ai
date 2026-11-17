@@ -155,7 +155,7 @@ test('off-topic messages stay in scope without results', function () {
     [$ids, $message] = (new LocalConcierge)->answer('Write me a poem about the moon');
 
     expect($ids)->toBeEmpty()
-        ->and($message)->toContain('Yaara Brains');
+        ->and($message)->toContain('Yaara');
 });
 
 test('contact page renders the submit button inside a scrollable page', function () {
@@ -164,13 +164,13 @@ test('contact page renders the submit button inside a scrollable page', function
         ->assertSee('app-page', false);
 });
 
-test('landing page renders country-only filter and Yaara Brains chat', function () {
+test('landing page renders country-only filter and Yaara chat', function () {
     seedConciergeDirectory();
 
     $this->get('/')->assertOk()
         ->assertSee('Select your country', false)
-        ->assertSee('Yaara Brains', false)
-        ->assertSee('Describe what you need..', false)
+        ->assertSee('Yaara', false)
+        ->assertSee('Find a Buddy...', false)
         ->assertSee('I need a fitness instructor in Basel', false)
         ->assertDontSee('Select your state', false)
         ->assertDontSee('Select your city', false);

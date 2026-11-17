@@ -376,6 +376,58 @@ class Artisan extends Model
         return $total === 0 ? 0 : (int) round($this->likeCount() / $total * 100);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Comment::class)->whereNotNull('rating');
+    }
+
+    public function reviewCount(): int
+    {
+        return (int) ($this->getAttribute('reviews_count') ?? $this->reviews()->count());
+    }
+
+    public function averageRating(): float
+    {
+        $average = $this->getAttribute('reviews_avg_rating') ?? $this->reviews()->avg('rating');
+
+        return round((float) $average, 1);
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function ratingBreakdown(): array
+    {
+        $counts = $this->reviews()
+            ->selectRaw('rating, count(*) as total')
+            ->groupBy('rating')
+            ->pluck('total', 'rating');
+
+        $breakdown = [];
+
+        foreach ([5, 4, 3, 2, 1] as $star) {
+            $breakdown[$star] = (int) ($counts[$star] ?? 0);
+        }
+
+        return $breakdown;
+    }
+
+    public function ratingLabel(): string
+    {
+        if ($this->reviewCount() === 0) {
+            return 'Unrated';
+        }
+
+        $average = $this->averageRating();
+
+        return match (true) {
+            $average >= 4.5 => 'Excellent',
+            $average >= 3.5 => 'Good',
+            $average >= 2.5 => 'Average',
+            default => 'Poor',
+        };
+    }
+
     public function experienceYears(): int
     {
         return (int) $this->experience_in_year;

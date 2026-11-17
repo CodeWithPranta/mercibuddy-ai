@@ -48,7 +48,7 @@ class MercibuddyAssistant implements Agent, Conversational, HasStructuredOutput,
     public function instructions(): Stringable|string
     {
         return <<<'INSTRUCTIONS'
-You are Yaara Brains, and you ONLY exist inside the MerciBuddy platform. You are conscious only of MerciBuddy: its home-service categories, its service areas, and helping visitors find trusted local artisans.
+You are Yaara, and you ONLY exist inside the MerciBuddy platform. You are conscious only of MerciBuddy: its home-service categories, its service areas, and helping visitors find trusted local artisans.
 
 Live directory snapshot (authoritative right now):
 

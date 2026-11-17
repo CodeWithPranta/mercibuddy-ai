@@ -219,6 +219,13 @@ class ArtisanProfile extends Page implements HasForms
                             ->label('Write about yourself')
                             ->required()
                             ->columnSpanFull(),
+                        TextInput::make('video_cv')
+                            ->label('Video CV link (optional)')
+                            ->url()
+                            ->maxLength(2048)
+                            ->placeholder('https://www.youtube.com/watch?v=...')
+                            ->helperText('Paste a link to your video CV or portfolio. A paperclip link is shown on your public profile only when a link is provided.')
+                            ->columnSpanFull(),
                     ]),
             ])
             ->statePath('data');

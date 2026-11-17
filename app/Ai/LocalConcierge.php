@@ -399,7 +399,7 @@ class LocalConcierge
 
     /**
      * Mirror the visitor's salutation and never repeat the same line:
-     * first greeting introduces Yaara Brains, later ones stay short
+     * first greeting introduces Yaara, later ones stay short
      * and rotate so the chat feels alive.
      */
     private function greetingResponse(string $question): string
@@ -416,7 +416,7 @@ class LocalConcierge
         }
 
         if ($this->assistantReplyCount() === 0) {
-            return $salutation."! I'm Yaara Brains. Please tell me what you need and I'll help you find trusted skilled artisans near you.";
+            return $salutation."! I'm Yaara. Please tell me what service you need and I'll help you find trusted skilled artisans near you.";
         }
 
         return $this->pick([
@@ -429,7 +429,7 @@ class LocalConcierge
     private function platformResponse(): string
     {
         return $this->pick([
-            'Yaara Brains connects you with trusted local artisans. We currently offer '.$this->categoryList().', serving '.$this->areaList().'. Tell me what you need and where, and I will find the right people.',
+            'Yaara connects you with trusted local artisans. We currently offer '.$this->categoryList().', serving '.$this->areaList().'. Tell me what you need and where, and I will find the right people.',
             'Here is what MerciBuddy covers: '.$this->categoryList().'. Our service areas are '.$this->areaList().'. Give me a service and a city and I will find matching artisans.',
         ]);
     }
@@ -437,7 +437,7 @@ class LocalConcierge
     private function offTopicResponse(): string
     {
         return $this->pick([
-            "I'm Yaara Brains, so I can only help with finding trusted artisans and home services here — like ".$this->categoryList().'. Tell me what service you need and your city, and I will find the right people for you.',
+            "I'm Yaara, so I can only help with finding trusted artisans and home services here — like ".$this->categoryList().'. Tell me what service you need and your city, and I will find the right people for you.',
             'That is outside what I can do — I live inside MerciBuddy and only know our artisans and services, such as '.$this->categoryList().'. What home service can I find for you, and in which city?',
         ]);
     }

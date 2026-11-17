@@ -53,6 +53,10 @@ class StatsOverview extends BaseWidget
                 ->description('Like-to-dislike ratio')
                 ->color($satisfaction >= 60 ? 'success' : ($satisfaction >= 40 ? 'warning' : 'danger')),
 
+            Stat::make('Rating', $artisan->reviewCount() > 0 ? number_format($artisan->averageRating(), 1).' / 5' : 'No reviews')
+                ->description($artisan->reviewCount().' customer '.($artisan->reviewCount() === 1 ? 'review' : 'reviews'))
+                ->color($artisan->reviewCount() > 0 ? 'warning' : 'gray'),
+
             Stat::make('Services', $serviceCount)
                 ->description('Service details you offer')
                 ->color('info'),
