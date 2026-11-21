@@ -35,7 +35,7 @@
                         $profileUrl = route('artisan.show', ['artisan' => $artisan->id, 'slug' => Str::slug($artisan->full_name)]);
                         $skills = array_slice(array_values(array_filter((array) $artisan->skills)), 0, 5);
                     @endphp
-                    <article class="relative flex min-h-[190px] flex-col rounded-2xl border-2 border-emerald-300 bg-white p-3 shadow-sm transition hover:border-emerald-400 hover:shadow-md sm:p-4">
+                    <article class="relative flex min-h-[190px] flex-col rounded-2xl border-2 border-[#0f5132] bg-white p-3 shadow-sm transition hover:border-[#0b3d26] hover:shadow-md sm:p-4">
                         <div class="grid flex-1 grid-cols-[auto_minmax(0,1fr)] items-start gap-3 pt-2 sm:gap-4">
                             <div class="flex flex-col items-start">
                                 <span class="mb-2 inline-flex h-4 w-9 items-center rounded-full bg-slate-200" title="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" aria-label="{{ $artisan->is_active ? 'Active' : 'Out of service' }}" role="status">
@@ -64,7 +64,7 @@
                             </a>
                         </div>
 
-                        <div class="mt-3 grid grid-cols-[minmax(0,1fr)_auto_auto] items-end gap-3">
+                        <div class="mt-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-3">
                             <div class="min-w-0">
                                 <p class="break-words text-base font-extrabold leading-tight text-slate-900">{{ $artisan->full_name }}</p>
                                 <p class="mt-1 truncate text-xs font-semibold text-slate-700">
@@ -75,11 +75,11 @@
                                     {{ $artisan->city?->name ?: ($artisan->state?->name ?: $artisan->country?->name) }}
                                 </p>
                             </div>
-                            <div class="flex w-24 shrink-0 flex-col items-center justify-center text-center">
+                            <div class="flex w-28 shrink-0 flex-col items-center justify-center border-x border-slate-500 px-4 text-center">
                                 <p class="text-2xl font-extrabold leading-none text-slate-900">{{ $artisan->satisfactionPercentage() }}%</p>
                                 <p class="mt-1 whitespace-nowrap text-[11px] font-semibold text-slate-500">satisfaction rate</p>
                             </div>
-                            <span class="justify-self-end whitespace-nowrap rounded-full bg-[#0f5132] px-3 py-2 text-[11px] font-bold text-white">
+                            <span class="justify-self-end whitespace-nowrap rounded-full bg-[#d9f7c6] px-3 py-2 text-sm font-extrabold text-[#15803d]">
                                 @if ($artisan->priceLabel() !== null)
                                     {{ $artisan->priceLabel() }}
                                 @else

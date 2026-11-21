@@ -101,3 +101,21 @@ document.addEventListener('livewire:init', () => {
 document.addEventListener('livewire:navigated', () => {
     scrollChatToBottom();
 });
+
+// Browsers can restore a cached landing page (back/forward or refresh) with
+// the previously tapped category still highlighted. The server state is
+// intentionally reset on mount, so clear the stale visual state too.
+function clearCategorySelection() {
+    document.querySelectorAll('.app-category-selected').forEach((button) => {
+        button.classList.remove('app-category-selected');
+        button.setAttribute('aria-pressed', 'false');
+    });
+}
+
+window.addEventListener('pageshow', () => {
+    window.setTimeout(clearCategorySelection, 0);
+});
+
+document.addEventListener('livewire:navigated', () => {
+    window.setTimeout(clearCategorySelection, 0);
+});

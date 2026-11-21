@@ -21,7 +21,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -47,10 +47,9 @@ class ArtisanProfile extends Page implements HasForms
     {
         return $schema
             ->components([
-                Grid::make([
-                    'default' => 1,
-                    'sm' => 2,
-                ])
+                Section::make('Profile photos')
+                    ->description('Add a professional cover image and a clear profile photo.')
+                    ->icon('heroicon-o-camera')
                     ->schema([
                         FileUpload::make('cover_photo')
                             ->label('Cover photo (16:9)')
@@ -71,6 +70,16 @@ class ArtisanProfile extends Page implements HasForms
                                 '1:1',
                             ])
                             ->required(),
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ]),
+
+                Section::make('Professional details')
+                    ->description('Tell customers what you do, your experience and how you charge.')
+                    ->icon('heroicon-o-briefcase')
+                    ->schema([
                         TextInput::make('full_name')
                             ->minLength(3)
                             ->maxLength(255)
@@ -140,11 +149,21 @@ class ArtisanProfile extends Page implements HasForms
                             ->offColor('danger')
                             ->onIcon('heroicon-s-check')
                             ->offIcon('heroicon-s-x-mark'),
-
                         DatePicker::make('date_of_birth')
+                            ->label('Date of birth')
                             ->minDate(now()->subYears(100))
                             ->maxDate(now()->subYear(13))
                             ->required(),
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ]),
+
+                Section::make('Location')
+                    ->description('Let customers know where you provide your services.')
+                    ->icon('heroicon-o-map-pin')
+                    ->schema([
                         Select::make('country_id')
                             ->label('Country')
                             ->options(Country::ordered()->pluck('name', 'id')->toArray())
@@ -181,7 +200,19 @@ class ArtisanProfile extends Page implements HasForms
                                 : 'Select a state first')
                             ->searchable()
                             ->required(),
-                        Textarea::make('address')->required(),
+                        Textarea::make('address')
+                            ->required()
+                            ->columnSpanFull(),
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 3,
+                    ]),
+
+                Section::make('Languages')
+                    ->description('Add the languages you speak and how well you speak them.')
+                    ->icon('heroicon-o-language')
+                    ->schema([
                         Repeater::make('language_proficiencies')
                             ->label('Language proficiency')
                             ->schema([
@@ -213,19 +244,22 @@ class ArtisanProfile extends Page implements HasForms
                                     ->required(),
                             ])
                             ->columns(2)
-                            ->defaultItems(0)
-                            ->columnSpanFull(),
+                            ->defaultItems(0),
+                    ]),
+
+                Section::make('About you')
+                    ->description('Write a professional introduction and link a video CV or portfolio.')
+                    ->icon('heroicon-o-document-text')
+                    ->schema([
                         RichEditor::make('biography')
                             ->label('Write about yourself')
-                            ->required()
-                            ->columnSpanFull(),
+                            ->required(),
                         TextInput::make('video_cv')
                             ->label('Video CV link (optional)')
                             ->url()
                             ->maxLength(2048)
                             ->placeholder('https://www.youtube.com/watch?v=...')
-                            ->helperText('Paste a link to your video CV or portfolio. A paperclip link is shown on your public profile only when a link is provided.')
-                            ->columnSpanFull(),
+                            ->helperText('Paste a link to your video CV or portfolio. A paperclip link is shown on your public profile only when a link is provided.'),
                     ]),
             ])
             ->statePath('data');
@@ -247,23 +281,12 @@ class ArtisanProfile extends Page implements HasForms
         $userId = Filament::auth()->user()->id;
         $existingArtisanInfo = Artisan::where('user_id', $userId)->first();
 
-        // dd($existingArtisanInfo);
-
         if ($existingArtisanInfo) {
-            // $data['user_id'] = Filament::auth()->user()->id;
             $existingArtisanInfo->update($data);
         } else {
             $data['user_id'] = $userId;
-            // dd($this->form->getState());
             Artisan::create($data);
         }
-
-        // $data = $this->form->getState();
-        // $userId = Filament::auth()->user()->id;
-
-        // $existingArtisanInfo = Artisan::firstOrNew(['user_id' => $userId]);
-        // $existingArtisanInfo->fill($data);
-        // $existingArtisanInfo->save();
 
         Notification::make()
             ->success()

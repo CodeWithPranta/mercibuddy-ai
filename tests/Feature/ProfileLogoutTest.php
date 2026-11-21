@@ -34,10 +34,11 @@ test('footer shows the logged in state on the account tab', function () {
         ->assertSee('Profile', false);
 });
 
-test('footer shows a plain account tab for guests', function () {
+test('footer shows guest navigation without a logged in indicator', function () {
     $this->get('/')
         ->assertOk()
-        ->assertSee('Account', false)
+        ->assertSee('Login', false)
+        ->assertSee('Menu', false)
         ->assertDontSee('app-nav-dot', false);
 });
 

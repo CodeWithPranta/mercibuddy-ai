@@ -27,12 +27,13 @@
             <svg class="app-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linejoin="round" d="M4 5.5h16v10H9l-4 3v-3H4v-10Z" /><path stroke-linecap="round" d="M8 10.5h.01m4 0h.01m4 0h.01" /></svg>
         </a>
     @else
-        <span class="app-footer-copyright">&copy; {{ date('Y') }} mercibuddy</span>
+        <span class="app-footer-copyright">&copy; {{ date('Y') }} MerciBuddy</span>
     @endauth
     <button type="button" class="app-nav-item" aria-label="Menu" @click="open = ! open" :aria-expanded="open">
         <svg class="app-nav-icon app-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" /></svg>
     </button>
     <div x-show="open" x-transition class="app-menu-panel" @click.outside="open = false">
+        <a href="/page/about" wire:navigate.hover>About us</a>
         <a href="/page/terms-of-use" wire:navigate.hover>Terms &amp; Conditions</a>
         <a href="/page/privacy-policy" wire:navigate.hover>Privacy Policy</a>
         @auth

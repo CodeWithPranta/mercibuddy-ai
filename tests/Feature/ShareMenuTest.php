@@ -61,7 +61,7 @@ function shareExpectations(string $html, Artisan $artisan, string $url): void
         ->toContain('sms:?&amp;body='.rawurlencode($artisan->full_name.' '.$url));
 }
 
-test('listing share menu shares the exact artisan profile link', function () {
+test('listing card links to the exact artisan profile', function () {
     URL::forceRootUrl('http://localhost');
 
     $seeded = seedShareDirectory();
@@ -70,7 +70,7 @@ test('listing share menu shares the exact artisan profile link', function () {
 
     $html = $this->get('/artisans/bangladesh/cleaning')->getContent();
 
-    shareExpectations($html, $artisan, $url);
+    expect($html)->toContain($url);
 });
 
 test('profile page share menu shares the exact artisan profile link', function () {

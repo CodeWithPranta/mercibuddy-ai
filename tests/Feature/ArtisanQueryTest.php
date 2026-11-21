@@ -150,12 +150,14 @@ test('the footer shows alerts for artisans and customers with queries', function
     $this->actingAs($artisanUser);
     Livewire::test(FooterSection::class)
         ->assertSee('Notifications')
-        ->assertDontSee('About');
+        ->assertSee('About us')
+        ->assertDontSee('aria-label="About"', false);
 
     $this->actingAs($customer);
     Livewire::test(FooterSection::class)
         ->assertSee('Notifications')
-        ->assertDontSee('About');
+        ->assertSee('About us')
+        ->assertDontSee('aria-label="About"', false);
 });
 
 test('the footer keeps the about link for users without queries', function () {
@@ -163,8 +165,15 @@ test('the footer keeps the about link for users without queries', function () {
 
     $this->actingAs($customer);
     Livewire::test(FooterSection::class)
-        ->assertSee('About')
+        ->assertSee('About us')
         ->assertDontSee('Notifications');
+});
+
+test('guests can open the about us page from the footer menu', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('About us')
+        ->assertSee('/page/about', false);
 });
 
 test('the artisan profile bell opens the query form', function () {

@@ -25,6 +25,9 @@
         ->filter()
         ->implode(', ');
     $satisfaction = (int) $artisan->satisfactionPercentage();
+    $ratingLabel = $satisfaction >= 80 ? 'Excellent' : ($satisfaction >= 60 ? 'Good' : ($satisfaction >= 40 ? 'Average' : 'Unrated'));
+    $ratingOptions = ['Excellent', 'Good', 'Average', 'Unrated'];
+    $reviewCount = $artisan->likeCount() + $artisan->dislikeCount();
     $videoCvUrl = filled($artisan->video_cv)
         ? (str_starts_with((string) $artisan->video_cv, 'http')
             ? $artisan->video_cv
@@ -32,24 +35,6 @@
                 ? asset('storage/'.$artisan->video_cv)
                 : null))
         : null;
-    $serviceAttachmentUrl = $services
-        ->map(function ($service): ?string {
-            $image = (string) $service->featured_image;
-
-            if ($image === '') {
-                return null;
-            }
-
-            if (str_starts_with($image, 'http')) {
-                return $image;
-            }
-
-            return \Illuminate\Support\Facades\Storage::disk('public')->exists($image)
-                ? asset('storage/'.$image)
-                : null;
-        })
-        ->filter()
-        ->first();
 @endphp
 
 <div class="app-page">
@@ -139,7 +124,15 @@
                         </div>
 
                         <div class="mt-5 border-t border-slate-200 pt-4">
-                            <livewire:artisan-reviews :artisan="$artisan" />
+                            <p class="text-lg font-extrabold text-slate-900">
+                                Customer rating
+                                <span class="text-sm font-semibold text-slate-500">({{ number_format($reviewCount) }} {{ Str::plural('review', $reviewCount) }})</span>
+                            </p>
+                            <div class="mt-3 grid grid-cols-4 gap-2" aria-label="Rating">
+                                @foreach ($ratingOptions as $option)
+                                    <span class="rounded-lg border-2 px-1.5 py-2 text-center text-[11px] font-extrabold leading-none sm:px-2 sm:text-sm {{ $option === $ratingLabel ? 'border-blue-900 bg-blue-900 text-white' : 'border-slate-900 bg-white text-slate-900' }}">{{ $option }}</span>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -241,42 +234,41 @@
                 <div id="service-details" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4">
                     <div class="mb-3 flex items-center justify-between gap-2">
                         <h3 class="text-lg font-bold text-slate-900">Service Details</h3>
-                        @if ($serviceAttachmentUrl)
-                            <a href="{{ $serviceAttachmentUrl }}" target="_blank" rel="noopener" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 transition hover:bg-emerald-100" title="View service attachment" aria-label="View service attachment">
-                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                            </a>
-                        @endif
                     </div>
 
                     @forelse ($services as $service)
                         @php
-                            $featuredImage = str_starts_with((string) $service->featured_image, 'http')
-                                ? $service->featured_image
-                                : asset('storage/'.$service->featured_image);
+                            $rawServiceImage = (string) $service->featured_image;
+                            $serviceImageUrl = null;
+
+                            if ($rawServiceImage !== '') {
+                                $serviceImageUrl = str_starts_with($rawServiceImage, 'http')
+                                    ? $rawServiceImage
+                                    : (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawServiceImage)
+                                        ? asset('storage/'.$rawServiceImage)
+                                        : null);
+                            }
+
                             $serviceSummary = Str::limit(trim(strip_tags((string) $service->content)), 90);
                         @endphp
-                        <div class="relative mb-3 overflow-hidden rounded-lg border border-slate-300">
-                            <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" class="h-32 w-full bg-slate-100" aria-hidden="true">
-                                <rect width="400" height="140" fill="#dbe7ea"/>
-                                <rect x="0" y="90" width="400" height="50" fill="#2b3a55"/>
-                                <circle cx="70" cy="55" r="20" fill="#e2b98f"/>
-                                <rect x="45" y="75" width="50" height="45" fill="#ffffff"/>
-                                <rect x="45" y="30" width="14" height="45" fill="#e2b98f"/>
-                                <circle cx="200" cy="50" r="20" fill="#8a5a3a"/>
-                                <rect x="175" y="70" width="50" height="45" fill="#334155"/>
-                                <rect x="215" y="25" width="14" height="45" fill="#8a5a3a"/>
-                                <circle cx="320" cy="55" r="20" fill="#c98a5b"/>
-                                <rect x="295" y="75" width="50" height="45" fill="#e2e8f0"/>
-                                <rect x="335" y="30" width="14" height="45" fill="#c98a5b"/>
-                            </svg>
-                            @if ($featuredImage)
-                                <img src="{{ $featuredImage }}" alt="{{ $service->title }}" class="absolute inset-0 h-32 w-full object-cover" loading="lazy" onerror="this.style.display='none'">
+                        <div class="mb-3 flex items-start gap-3 rounded-xl border border-slate-300 bg-white p-2.5 last:mb-0">
+                            <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-100">
+                                @if ($serviceImageUrl)
+                                    <img src="{{ $serviceImageUrl }}" alt="{{ $service->title }}" class="h-full w-full object-cover" loading="lazy" onerror="this.style.display='none'">
+                                @else
+                                    <svg class="h-7 w-7 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                                @endif
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="break-words font-bold text-slate-900 [overflow-wrap:anywhere]">{{ $service->title }}</span>
+                                <p class="mt-1 break-words text-sm leading-snug text-slate-600 [overflow-wrap:anywhere]">{{ $serviceSummary }}</p>
+                            </div>
+                            @if ($serviceImageUrl)
+                                <a href="{{ $serviceImageUrl }}" target="_blank" rel="noopener" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 transition hover:bg-emerald-100" title="View service attachment" aria-label="View service attachment">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                                </a>
                             @endif
                         </div>
-                        <div class="mb-1">
-                            <span class="break-words font-bold text-slate-900 [overflow-wrap:anywhere]">{{ $service->title }}</span>
-                        </div>
-                        <p class="mb-3 break-words text-sm text-slate-600 [overflow-wrap:anywhere]">{{ $serviceSummary }}</p>
                     @empty
                         <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/60 px-6 py-10 text-center">
                             <span class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">

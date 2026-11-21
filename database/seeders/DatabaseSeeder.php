@@ -337,7 +337,6 @@ class DatabaseSeeder extends Seeder
                     'user_id' => $user->id,
                     'artisan_id' => $artisan->id,
                     'comment' => sprintf($comments[($i + $j) % count($comments)], $artisan->full_name),
-                    'rating' => 5 - (($i + $j) % 3),
                 ]);
             });
         });
